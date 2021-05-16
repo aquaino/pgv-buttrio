@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="it" class="h-100">
+
+  <!-- Head -->
+  {% include "partials/head.html" %}
+
+  <body class="d-flex flex-column h-100">
+
+    <!-- Fixed navbar -->
+    {% include "partials/navbar.html" %}
+
+    <!-- Page content -->
+    <main>
+      <div class="container-fluid">
+        {% for message in get_flashed_messages() %}
+          <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+          </div>
+        {% endfor %}
+
+        {% block content %}{% endblock %}
+      </div>
+    </main>
+
+    <!-- Footer -->
+    {% include "partials/footer.html" %}
+
+    <!-- Scripts -->
+    {% include "partials/scripts.html" %}
+  </body>
+</html>
