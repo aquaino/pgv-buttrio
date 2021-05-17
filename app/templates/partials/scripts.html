@@ -1,2 +1,15 @@
 <!-- Bootstrap JS -->
 <script src="{{ url_for('static', filename='bootstrap/js/bootstrap.bundle.min.js') }}"></script>
+<!-- DataTables JS -->
+<script src="https://cdn.datatables.net/1.10.24/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.10.24/js/dataTables.bootstrap5.min.js"></script>
+<!-- DataTable defaults -->
+<script>
+  // DataTable default configuration
+  $.extend( true, $.fn.dataTable.defaults, {
+    language: {
+      url: '//cdn.datatables.net/plug-ins/1.10.24/i18n/Italian.json'
+    },
+    "pageLength": 20,
+  });
+</script>

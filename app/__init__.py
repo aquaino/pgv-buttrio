@@ -30,7 +30,6 @@ def create_app(test_config=None):
         # Add admin user and some fake users
         admin_user = User(firstname="Admin", lastname="Admin", email1="admin@admin.it", admin=True, password=generate_password_hash("admin"))
         db.session.add(admin_user)
-        db.session.commit()
 
         fake_users = [
             ("Alan", "Quaino", "Uomo", datetime.strptime("14/03/1996", "%d/%m/%Y"), "Pordenone", "33042", "Buttrio", "Via Lungoroggia 77/5", "alanquaino@gmail.com", "3462709363"),
@@ -40,7 +39,6 @@ def create_app(test_config=None):
         for fake_user in fake_users:
             user = User(firstname=fake_user[0], lastname=fake_user[1], gender=fake_user[2], born_on=fake_user[3], born_in=fake_user[4], zip=fake_user[5], city=fake_user[6], address=fake_user[7], email1=fake_user[8], tel1=fake_user[9])
             db.session.add(user)
-            db.session.commit()
 
         click.echo("Admin and fake users created.")
 
@@ -49,7 +47,6 @@ def create_app(test_config=None):
         for type in user_types:
             user_type = UserType(name=type)
             db.session.add(user_type)
-            db.session.commit()
         click.echo("User types created.")
 
         # Add user subtypes
@@ -57,7 +54,6 @@ def create_app(test_config=None):
         for subtype in user_subtypes:
             user_subtype = UserSubtype(name=subtype[0], type_id=subtype[1])
             db.session.add(user_subtype)
-            db.session.commit()
         click.echo("User subtypes created.")
 
         # Associate users with some subtypes
@@ -65,14 +61,12 @@ def create_app(test_config=None):
         for assoc in associations:
             association = UserSubtypeAssociation(user_id=assoc[0], subtype_id=assoc[1])
             db.session.add(association)
-            db.session.commit()
 
         # Add Green Book categories
         gb_categories = ["Alpini in Armi", "Anziani", "Banco Alimentare", "Comunità", "Enti Benefici", "Manifestazioni Patriottiche", "Missioni", "Parrocchia", "Protezione Civile", "Scuole e Giovani"]
         for cat in gb_categories:
             gb_category = GreenBookCategory(name=cat)
             db.session.add(gb_category)
-            db.session.commit()
         click.echo("Green Book categories created.")
 
         # Add events
@@ -80,7 +74,6 @@ def create_app(test_config=None):
         for ev in events:
             event = Event(name=ev[0], green_book_cat_id=ev[1])
             db.session.add(event)
-            db.session.commit()
         click.echo("Events created.")
 
         # Add activities
@@ -88,8 +81,10 @@ def create_app(test_config=None):
         for act in activities:
             activity = Activity(name=act)
             db.session.add(activity)
-            db.session.commit()
         click.echo("Activities created.")
+
+        # Commit all
+        db.session.commit()
 
     @click.command("recreate-db")
     @with_appcontext
