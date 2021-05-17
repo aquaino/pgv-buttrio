@@ -11,6 +11,7 @@ from flask import url_for
 from werkzeug.security import check_password_hash
 from werkzeug.security import generate_password_hash
 from app.models import db, User
+from .forms import LoginForm
 
 bp = Blueprint("auth", __name__, url_prefix="/auth")
 
@@ -44,9 +45,11 @@ def load_logged_in_user():
 @bp.route("/login", methods=("GET", "POST"))
 def login():
     """Log in an admin user by adding the user id to the session."""
-    if request.method == "POST":
-        email = request.form["email"]
-        password = request.form["password"]
+    form = LoginForm()
+
+    if form.validate_on_submit():
+        email = form.email.data
+        password = form.password.data
         error = None
         user = User.query.filter_by(email1=email).first()
 
@@ -65,7 +68,7 @@ def login():
 
         flash(error)
 
-    return render_template("auth/login.html")
+    return render_template("auth/login.html", form=form);
 
 
 @bp.route("/logout")

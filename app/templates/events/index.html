@@ -8,5 +8,5 @@
 <a type="button" href="{{ url_for('events.new_event') }}" class="btn btn-success float-end"><i class="bi bi-calendar-plus-fill me-2"></i>Aggiungi</a>
 <h2 class="py-2"><i class="bi bi-calendar-week-fill text-primary me-2"></i>{{ page_title }}</h2>
 
-{{ page_macros.render_events_table("Eventi", events) }}
+{{ page_macros.render_events_table("Tutti gli eventi", events) }}
 {% endblock %}
