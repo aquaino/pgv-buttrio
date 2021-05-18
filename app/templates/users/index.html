@@ -2,14 +2,14 @@
 {% set active_page = "users.index" %}
 {% set page_title = "Gestione volontari" %}
 
-{% import "macros/page_macros.html" as page_macros %}
+{% import "macros/table_macros.html" as table_macros %}
 
 {% block content %}
 <button type="button" class="btn btn-success float-end"><i class="bi bi-person-plus-fill me-2"></i>Aggiungi</button>
 <h2 class="py-2"><i class="bi bi-people-fill text-primary me-2"></i>{{ page_title }}</h2>
 
-{{ page_macros.render_users_table("Protezione Civile", users) }}
-{{ page_macros.render_users_table("Alpini", users) }}
-{{ page_macros.render_users_table("Volontari occasionali", users) }}
-{{ page_macros.render_users_table("Esterni non assicurati", users) }}
+{{ table_macros.render_users_table("Protezione Civile", users) }}
+{{ table_macros.render_users_table("Alpini", users) }}
+{{ table_macros.render_users_table("Volontari occasionali", users) }}
+{{ table_macros.render_users_table("Esterni non assicurati", users) }}
 {% endblock %}

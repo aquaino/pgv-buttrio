@@ -54,11 +54,11 @@ def login():
         user = User.query.filter_by(email1=email).first()
 
         if user is None:
-            error = "Indirizzo email non presente."
+            error = "Indirizzo email non presente!"
         elif not check_password_hash(user.password, password):
-            error = "Password sbagliata."
+            error = "Password sbagliata!"
         elif user.admin is False:
-            error = "Non sei un amministratore."
+            error = "Non sei un amministratore!"
 
         if error is None:
             # store the user id in a new session and return to the index
@@ -66,7 +66,7 @@ def login():
             session["user_id"] = user.id
             return redirect(url_for("index"))
 
-        flash(error)
+        flash(("error", error))
 
     return render_template("auth/login.html", form=form);
 
