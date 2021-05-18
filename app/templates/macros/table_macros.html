@@ -75,10 +75,11 @@
       <script>
         $(document).ready(function() {
           var table = $("#{{ table_id }}").DataTable({
+            dom: "<'row'<'col-sm-6 col-md-4 col-lg-3 col-xl-2'B><'col-sm-6 col-md-4 col-lg-2 col-xl-2 mt-1'l><'col-sm-12 col-md-4 col-lg-7 col-xl-8'f>>" + "<'row'<'col-sm-12'tr>>" + "<'row'<'col-sm-5'i><'col-sm-7'p>>",
             "pageLength": 25,
             "columnDefs": [
               { "targets": [3], "orderable": false }
-            ]
+            ],
           });
         });
       </script>
