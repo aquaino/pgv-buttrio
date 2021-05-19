@@ -1,9 +1,16 @@
 {% extends "base.html" %}
 {% set active_page = "events.index" %}
-{% set page_title = "Nuovo evento" %}
+
+{% if action == "new" %}
+  {% set page_title = "Nuovo evento" %}
+  {% set page_icon = "bi-calendar-plus-fill" %}
+{% elif action == "update" %}
+  {% set page_title = "Modifica evento" %}
+  {% set page_icon = "bi-gear-fill" %}
+{% endif %}
 
 {% block content %}
-<h2 class="py-2"><i class="bi bi-calendar-plus-fill text-primary me-2"></i>{{ page_title }}</h2>
+<h2 class="py-2"><i class="bi {{ page_icon }} text-primary me-2"></i>{{ page_title }}</h2>
 <h4 class="border-start border-primary border-4 ps-2 mt-3">Dati dell'evento</h4>
 <form method="POST" class="mt-3">
   {{ form.csrf_token }}
@@ -25,6 +32,7 @@
       {{ form.descr(class="form-control") }}
     </div>
   </div>
-  {{ form.submit(class="btn btn-primary") }}
+  {{ form.submit(class="btn btn-success") }}
+  <a href="{{ url_for('events.index') }}" type="button" class="btn btn-danger">Annulla</a>
 </form>
 {% endblock %}

@@ -30,10 +30,10 @@ def new_event():
         db.session.add(event)
         db.session.commit()
 
-        flash(("success", "Evento \"{}\" aggiunto!".format(event.name)))
-        return redirect(url_for("events.new_event"))
+        flash(("success", "Evento \"{}\" aggiunto.".format(event.name)))
+        return redirect(url_for("events.new_event", action="new"))
 
-    return render_template("events/new_event.html", form=form)
+    return render_template("events/new_update_event.html", form=form, action="new")
 
 @bp.route('/<int:event_id>/delete')
 @login_required
@@ -45,7 +45,7 @@ def delete_event(event_id):
 
     db.session.delete(event)
     db.session.commit()
-    flash(("success", "Evento \"{}\" eliminato!".format(event.name)))
+    flash(("success", "Evento \"{}\" eliminato.".format(event.name)))
 
     return redirect(url_for("events.index"))
 
@@ -71,10 +71,10 @@ def update_event(event_id):
         db.session.add(event)
         db.session.commit()
 
-        flash(("success", "Evento \"{}\" modificato!".format(event.name)))
+        flash(("success", "Evento \"{}\" modificato.".format(event.name)))
         return redirect(url_for("events.index"))
 
-    return render_template("events/new_event.html", form=form)
+    return render_template("events/new_update_event.html", form=form, action="update")
 
 @bp.route('/<int:event_id>/duplicate')
 @login_required
@@ -90,6 +90,6 @@ def duplicate_event(event_id):
     event.id = None
     db.session.add(event)
     db.session.commit()
-    flash(("success", "Evento \"{}\" duplicato!".format(event.name)))
+    flash(("success", "Evento \"{}\" duplicato.".format(event.name)))
 
     return redirect(url_for("events.index"))

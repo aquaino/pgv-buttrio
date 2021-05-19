@@ -1,15 +1,47 @@
+{% macro table_scripts(table_id) %}
+  <script>
+    $(document).ready(function() {
+      var table = $("#{{ table_id }}").DataTable({
+        dom: "<'row'<'col-sm-6 col-md-4 col-lg-3 col-xl-2'B><'col-sm-6 col-md-4 col-lg-2 col-xl-2 mt-1'l><'col-sm-12 col-md-4 col-lg-7 col-xl-8'f>>" + "<'row'<'col-sm-12'tr>>" + "<'row'<'col-sm-5'i><'col-sm-7'p>>",
+        "pageLength": 25,
+        "columnDefs": [
+          { "targets": [$('#{{ table_id }} thead tr th').length - 1], "orderable": false }
+        ],
+        initComplete: function() {
+          this.api().columns().every(function() {
+              var column = this;
+              var select = $('<select class="form-select form-select-sm"><option class="text-muted" value=""></option></select>')
+                .appendTo($(column.footer()).empty())
+                .on('change', function() {
+                  var val = $.fn.dataTable.util.escapeRegex(
+                    $(this).val()
+                  );
+                  column.search(val ? '^' + val + '$' : '', true, false).draw();
+                });
+
+              column.data().unique().sort().each(function (d, j) {
+                  select.append('<option value="' + d + '">' + d + '</option>')
+              });
+          });
+        }
+      });
+    });
+  </script>
+{% endmacro %}
+
 {% macro render_users_table(title, users) %}
   <h4 class="border-start border-primary border-4 ps-2 mt-4">{{ title }}</h4>
-  {% set headers = ["Cognome", "Nome", "Genere", "Nato a", "Nato il", "CAP", "Città", "Indirizzo", "Email 1", "Email 2", "Tel 1", "Tel 2", "Note"] %}
+  {% set headers = ["Cognome", "Nome", "Genere", "Nato il", "Nato a", "CAP", "Città", "Indirizzo", "Email 1", "Email 2", "Tel 1", "Tel 2", "Note"] %}
   <div class="mx-auto mt-3">
     <div class="table-responsive">
       {% set table_id = title.replace(" ", "-").lower() + "-table" %}
-      <table id="{{ table_id }}" class="table table-striped table-sm">
+      <table id="{{ table_id }}" class="table table-sm">
         <thead>
           <tr>
             {% for header in headers%}
               <th>{{ header }}</th>
             {% endfor %}
+            <th></th>
           </tr>
         </thead>
         <tbody>
@@ -28,16 +60,26 @@
             <td>{{ user.tel1 }}</td>
             <td>{{ user.tel2 }}</td>
             <td>{{ user.notes }}</td>
+            <td class="text-center">
+              <!-- <a class="me-1" href="{{ url_for('events.update_event', event_id=user.id) }}" title="Modifica"><i class="bi bi-gear-fill text-primary"></i></a>
+              <a class="me-1" href="{{ url_for('events.duplicate_event', event_id=user.id) }}" title="Duplica"><i class="bi bi-file-earmark-plus-fill text-primary"></i></a>
+              <a class="me-1" href="{{ url_for('events.delete_event', event_id=user.id) }}" title="Elimina"><i class="bi bi-trash-fill text-primary"></i></a> -->
+              <a class="me-1" href="#" title="Modifica"><i class="bi bi-gear-fill text-primary"></i></a>
+              <a class="me-1" href="#" title="Duplica"><i class="bi bi-file-earmark-plus-fill text-primary"></i></a>
+              <a class="me-1" href="#" title="Elimina"><i class="bi bi-trash-fill text-primary"></i></a>
+            </td>
           </tr>
-          {% endfor %}</tbody>
+          {% endfor %}
+        </tbody>
+        <tfoot>
+          <tr>
+            {% for header in headers%}
+              <th>{{ header }}</th>
+            {% endfor %}
+          </tr>
+        </tfoot>
       </table>
-      <script>
-        $(document).ready(function() {
-          var table = $("#{{ table_id }}").DataTable({
-            "pageLength": 20,
-          });
-        });
-      </script>
+      {{ table_scripts(table_id) }}
     </div>
   </div>
 {% endmacro %}
@@ -63,26 +105,23 @@
             <td>{{ event.cat_name }}</td>
             <td>{{ event.name }}</td>
             <td>{{ event.descr }}</td>
-            <td class="text-center text-primary">
-              <a class="me-1" href="{{ url_for('events.update_event', event_id=event.id) }}" title="Modifica"><i class="bi bi-gear-fill"></i></a>
-              <a class="me-1" href="{{ url_for('events.duplicate_event', event_id=event.id) }}" title="Duplica"><i class="bi bi-file-earmark-plus-fill"></i></a>
-              <a class="me-1" href="{{ url_for('events.delete_event', event_id=event.id) }}" title="Elimina"><i class="bi bi-trash-fill"></i></a>
+            <td class="text-center">
+              <a class="me-1" href="{{ url_for('events.update_event', event_id=event.id) }}" title="Modifica"><i class="bi bi-gear-fill text-primary"></i></a>
+              <a class="me-1" href="{{ url_for('events.duplicate_event', event_id=event.id) }}" title="Duplica"><i class="bi bi-file-earmark-plus-fill text-primary"></i></a>
+              <a class="me-1" href="{{ url_for('events.delete_event', event_id=event.id) }}" title="Elimina"><i class="bi bi-trash-fill text-primary"></i></a>
             </td>
           </tr>
           {% endfor %}
         </tbody>
+        <tfoot>
+          <tr>
+            {% for header in headers%}
+              <th>{{ header }}</th>
+            {% endfor %}
+          </tr>
+        </tfoot>
       </table>
-      <script>
-        $(document).ready(function() {
-          var table = $("#{{ table_id }}").DataTable({
-            dom: "<'row'<'col-sm-6 col-md-4 col-lg-3 col-xl-2'B><'col-sm-6 col-md-4 col-lg-2 col-xl-2 mt-1'l><'col-sm-12 col-md-4 col-lg-7 col-xl-8'f>>" + "<'row'<'col-sm-12'tr>>" + "<'row'<'col-sm-5'i><'col-sm-7'p>>",
-            "pageLength": 25,
-            "columnDefs": [
-              { "targets": [3], "orderable": false }
-            ],
-          });
-        });
-      </script>
+      {{ table_scripts(table_id) }}
     </div>
   </div>
 {% endmacro %}
