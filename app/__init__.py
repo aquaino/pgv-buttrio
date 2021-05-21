@@ -108,6 +108,7 @@ def create_app(test_config=None):
     # Home = activity records
     app.add_url_rule('/', endpoint='index')
 
+    # Inject these functions in all templates
     # For current year in footer
     @app.context_processor
     def inject_now():

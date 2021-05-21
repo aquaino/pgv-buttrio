@@ -12,8 +12,8 @@
     <!-- Page content -->
     <main>
       <div class="container-fluid">
-        {% for type, message in get_flashed_messages() %}
-          <div class="alert {% if type == 'error' %} alert-danger {% elif type == 'success' %} alert-success {% endif %} alert-dismissible fade show" role="alert">
+        {% for category, message in get_flashed_messages(with_categories=true) %}
+          <div class="alert {% if category == 'error' %} alert-danger {% elif category == 'info' %} alert-success {% elif category == 'warning' %} alert-warning {% endif %} alert-dismissible fade show" role="alert">
             {{ message }}
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
           </div>

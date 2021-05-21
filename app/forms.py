@@ -8,7 +8,7 @@ class LoginForm(FlaskForm):
     password = PasswordField('Password', validators=[InputRequired()])
     submit = SubmitField('Accedi')
 
-class NewEventForm(FlaskForm):
+class NewUpdateEventForm(FlaskForm):
     gb_category = SelectField('Categoria Libro Verde*', validators=[InputRequired()])
     name = StringField('Nome*', validators=[InputRequired()])
     descr = TextAreaField('Descrizione', filters=[lambda x: x or None])

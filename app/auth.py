@@ -66,7 +66,7 @@ def login():
             session["user_id"] = user.id
             return redirect(url_for("index"))
 
-        flash(("error", error))
+        flash(error, "error")
 
     return render_template("auth/login.html", form=form);
 
