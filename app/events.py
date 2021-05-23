@@ -2,7 +2,7 @@ from flask import Blueprint
 from flask import render_template
 from app.auth import login_required
 from app.models import db, Event, GreenBookCategory
-from app.forms import NewUpdateEventForm
+from app.forms import NewUpdateEventForm, ConfirmActionForm
 from flask import flash, redirect, url_for, abort
 from sqlalchemy.orm.session import make_transient
 
@@ -36,19 +36,36 @@ def new_event():
 
     return render_template("events/new_update_event.html", form=form, action="new")
 
-@bp.route('/<int:event_id>/delete')
+# @bp.route('/<int:event_id>/delete', methods=("GET", "DELETE"))
+# @login_required
+# def delete_event(event_id):
+#     """Delete an event."""
+#     event = Event.query.filter_by(id=event_id).first()
+#     if event is None:
+#         abort(404)
+#
+#     db.session.delete(event)
+#     db.session.commit()
+#     flash("Evento \"{}\" eliminato.".format(event.name), "info")
+#
+#     return redirect(url_for("events.index"))
+
+@bp.route('/<int:event_id>/confirm_deletion', methods=("GET", "POST"))
 @login_required
-def delete_event(event_id):
-    """Delete an event."""
+def confirm_deletion(event_id):
+    """Confirm the deletion of an event."""
     event = Event.query.filter_by(id=event_id).first()
     if event is None:
         abort(404)
 
-    db.session.delete(event)
-    db.session.commit()
-    flash("Evento \"{}\" eliminato.".format(event.name), "info")
+    form = ConfirmActionForm()
+    if form.validate_on_submit():
+        db.session.delete(event)
+        db.session.commit()
+        flash("Evento \"{}\" eliminato.".format(event.name), "info")
+        return redirect(url_for("events.index"))
 
-    return redirect(url_for("events.index"))
+    return render_template("confirm_action.html", form=form, active_page="events.index", page_title="Conferma eliminazione evento", item_name=event.name)
 
 @bp.route('/<int:event_id>/update', methods=("GET", "POST"))
 @login_required

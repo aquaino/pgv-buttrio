@@ -13,3 +13,6 @@ class NewUpdateEventForm(FlaskForm):
     name = StringField('Nome*', validators=[InputRequired()])
     descr = TextAreaField('Descrizione', filters=[lambda x: x or None])
     submit = SubmitField('OK')
+
+class ConfirmActionForm(FlaskForm):
+    submit = SubmitField('OK')

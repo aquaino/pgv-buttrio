@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <h2 class="py-2"><i class="bi bi-trash-fill text-primary me-2"></i>{{ page_title }}</h2>
+  Vuoi davvero eliminare l'evento "{{ item_name }}"?
+  <form method="POST" class="mt-3">
+    <input type="hidden" name="_method" value="DELETE">
+    {{ form.csrf_token }}
+    {{ form.submit(class="btn btn-success") }}
+    <a href="{{ url_for(active_page) }}" type="button" class="btn btn-danger">Annulla</a>
+  </form>
+{% endblock %}
