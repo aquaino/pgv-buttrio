@@ -1,6 +1,8 @@
 {% extends "base.html" %}
 {% set active_page = "events.index" %}
 
+{% import "macros/form_macros.html" as form_macros %}
+
 {% if action == "new" %}
   {% set page_title = "Nuovo evento" %}
   {% set page_icon = "bi-calendar-plus-fill" %}
@@ -18,24 +20,11 @@
     <input type="hidden" name="_method" value="{{ hidden_method }}">
   {% endif %}
   {{ form.csrf_token }}
-  <div class="row mb-3">
-    {{ form.gb_category.label(class="col-md-4 col-lg-2 col-form-label") }}
-    <div class="col-md-8 col-lg-6">
-      {{ form.gb_category(class="form-select") }}
-    </div>
-  </div>
-  <div class="row mb-3">
-    {{ form.name.label(class="col-md-4 col-lg-2 col-form-label") }}
-    <div class="col-md-8 col-lg-6">
-      {{ form.name(class="form-control") }}
-    </div>
-  </div>
-  <div class="row mb-3">
-    {{ form.descr.label(class="col-md-4 col-lg-2 col-form-label") }}
-    <div class="col-md-8 col-lg-6">
-      {{ form.descr(class="form-control") }}
-    </div>
-  </div>
+
+  {{ form_macros.render_field(form.gb_category, "select") }}
+  {{ form_macros.render_field(form.name, "simple") }}
+  {{ form_macros.render_field(form.descr, "text") }}
+
   {{ form.submit(class="btn btn-success") }}
   <a href="{{ url_for('events.index') }}" type="button" class="btn btn-danger">Annulla</a>
 </form>

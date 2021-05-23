@@ -36,20 +36,6 @@ def new_event():
 
     return render_template("events/new_update_event.html", form=form, action="new")
 
-# @bp.route('/<int:event_id>/delete', methods=("GET", "DELETE"))
-# @login_required
-# def delete_event(event_id):
-#     """Delete an event."""
-#     event = Event.query.filter_by(id=event_id).first()
-#     if event is None:
-#         abort(404)
-#
-#     db.session.delete(event)
-#     db.session.commit()
-#     flash("Evento \"{}\" eliminato.".format(event.name), "info")
-#
-#     return redirect(url_for("events.index"))
-
 @bp.route('/<int:event_id>/confirm_deletion', methods=("GET", "POST"))
 @login_required
 def confirm_deletion(event_id):

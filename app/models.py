@@ -50,7 +50,6 @@ class UserSubtypeAssociation(db.Model):
     subtype_id = db.Column(db.Integer, db.ForeignKey('user_subtypes.id'), nullable=False)
     subtype = db.relationship('UserSubtype', backref=db.backref('user_subtype_associations', lazy=True))
     year = db.Column(db.Integer)
-    notes = db.Column(db.Text())
 
 class GreenBookCategory(db.Model):
     __tablename__ = "green_book_categories"

@@ -14,5 +14,22 @@ class NewUpdateEventForm(FlaskForm):
     descr = TextAreaField('Descrizione', filters=[lambda x: x or None])
     submit = SubmitField('OK')
 
+class NewUpdateUserForm(FlaskForm):
+    subtype = SelectField('Tipologia utente*', validators=[InputRequired()])
+    firstname = StringField('Nome*', validators=[InputRequired()])
+    lastname = StringField('Cognome*', validators=[InputRequired()])
+    gender = SelectField('Genere')
+    born_on = StringField('Nato il')
+    born_in = StringField('Nato a')
+    zip = StringField('CAP')
+    city = StringField('Città')
+    address = StringField('Indirizzo')
+    email1 = StringField('Indirizzo email*', validators=[InputRequired()])
+    email2 = StringField('Indirizzo email secondario')
+    tel1 = StringField('Numero di telefono')
+    tel2 = StringField('Numero di telefono secondario')
+    notes = TextAreaField('Note', filters=[lambda x: x or None])
+    submit = SubmitField('OK')
+
 class ConfirmActionForm(FlaskForm):
     submit = SubmitField('OK')
