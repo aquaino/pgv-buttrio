@@ -1,25 +1,39 @@
-from flask import Blueprint
+from flask import Blueprint, flash, abort, redirect, url_for
 from flask import render_template
 from app.auth import login_required
-from app.models import User
+from app.models import db, User, UserSubtypeAssociation, UserSubtype, UserType
 from datetime import datetime
-from app.forms import NewUpdateUserForm
+from app.forms import NewUpdateUserForm, ConfirmActionForm
 
 bp = Blueprint("users", __name__, url_prefix="/users")
-
-# TODO: setup user types queries
 
 @bp.route("/")
 @login_required
 def index():
     """Show all users, organized by type."""
-    users = User.query.order_by(User.lastname).all()
 
-    # Change dates format
-    for user in users:
-        if user.born_on:
-            user.born_on = datetime.strptime(str(user.born_on), "%Y-%m-%d").strftime("%d/%m/%Y")
-    return render_template("users/index.html", users=users)
+    def users_by_type(type):
+        users = User.query\
+            .with_entities(User.id, User.firstname, User.lastname, User.gender, User.born_on, User.born_in, User.zip, User.city, User.address, User.email1, User.email2, User.tel1, User.tel2, User.notes, UserSubtype.name.label("subtype_name"))\
+            .join(UserSubtypeAssociation, UserSubtypeAssociation.user_id == User.id)\
+            .join(UserSubtype, UserSubtype.id == UserSubtypeAssociation.subtype_id)\
+            .join(UserType, UserType.id == UserSubtype.type_id)\
+            .filter(UserType.name == type)\
+            .all()
+
+        # Change date format
+        # for user in users:
+        #     if user[3]:
+        #         user[3] = datetime.strptime(str(user.born_on), "%Y-%m-%d").strftime("%d/%m/%Y")
+        return users
+
+
+    pc = users_by_type("Protezione Civile")
+    alpini = users_by_type("Alpini")
+    occasionali = users_by_type("Volontari occasionali")
+    non_assicurati = users_by_type("Esterni non assicurati")
+
+    return render_template("users/index.html", pc=pc, alpini=alpini, occasionali=occasionali, non_assicurati=non_assicurati)
 
 @bp.route("/new-user", methods=("GET", "POST"))
 @login_required
@@ -39,3 +53,25 @@ def new_user():
         return redirect(url_for("users.new_user", action="new"))
 
     return render_template("users/new_update_user.html", form=form, action="new")
+
+@bp.route('/<int:user_id>/confirm_deletion', methods=("GET", "POST"))
+@login_required
+def confirm_deletion(user_id):
+    """Confirm the deletion of a user."""
+    user = User.query.filter_by(id=user_id).first()
+    if user is None:
+        abort(404)
+
+    fullname = "{} {}".format(user.firstname, user.lastname)
+    form = ConfirmActionForm()
+    if form.validate_on_submit():
+        # Remove user subtype association
+        subtype_assoc = UserSubtypeAssociation.query.filter_by(user_id=user.id).first()
+        db.session.delete(subtype_assoc)
+        db.session.delete(user)
+        db.session.commit()
+
+        flash("Volontario \"{}\" eliminato.".format(fullname), "info")
+        return redirect(url_for("users.index"))
+
+    return render_template("confirm_action.html", form=form, active_page="users.index", page_title="Conferma eliminazione volontario", item_name=fullname)

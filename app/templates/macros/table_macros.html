@@ -35,7 +35,7 @@
 
 {% macro render_users_table(title, users) %}
   <h4 class="border-start border-primary border-4 ps-2 mt-4">{{ title }}</h4>
-  {% set headers = ["Cognome", "Nome", "Genere", "Nato il", "Nato a", "CAP", "Città", "Indirizzo", "Email 1", "Email 2", "Tel 1", "Tel 2", "Note"] %}
+  {% set headers = ["Cognome", "Nome", "Genere", "Nato il", "Nato a", "CAP", "Città", "Indirizzo", "Email 1", "Email 2", "Tel 1", "Tel 2", "Tipologia", "Note"] %}
   <div class="mx-auto mt-3">
     <div class="table-responsive">
       {% set table_id = title.replace(" ", "-").lower() + "-table" %}
@@ -63,14 +63,12 @@
             <td>{{ replace_if_none(user.email2) }}</td>
             <td>{{ replace_if_none(user.tel1) }}</td>
             <td>{{ replace_if_none(user.tel2) }}</td>
+            <td>{{ user.subtype_name }}</td>
             <td>{{ replace_if_none(user.notes) }}</td>
             <td class="text-center">
-              {#} <a class="me-1" href="{{ url_for('events.update_event', event_id=user.id) }}" title="Modifica"><i class="bi bi-gear-fill text-primary"></i></a>
-              <a class="me-1" href="{{ url_for('events.duplicate_event', event_id=user.id) }}" title="Duplica"><i class="bi bi-file-earmark-plus-fill text-primary"></i></a>
-              <a class="me-1" href="{{ url_for('events.confirm', event_id=user.id) }}" title="Elimina"><i class="bi bi-trash-fill text-primary"></i></a> #}
               <a class="me-1" href="#" title="Modifica"><i class="bi bi-gear-fill text-primary"></i></a>
               <a class="me-1" href="#" title="Duplica"><i class="bi bi-file-earmark-plus-fill text-primary"></i></a>
-              <a class="me-1" href="#" title="Elimina"><i class="bi bi-trash-fill text-primary"></i></a>
+              <a class="me-1" href="{{ url_for('users.confirm_deletion', user_id=user.id) }}" title="Elimina"><i class="bi bi-trash-fill text-primary"></i></a>
             </td>
           </tr>
           {% endfor %}
