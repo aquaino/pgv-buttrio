@@ -94,6 +94,6 @@ def duplicate_event(event_id):
     event.id = None
     db.session.add(event)
     db.session.commit()
-    flash(("success", "Evento \"{}\" duplicato.".format(event.name)))
+    flash("Evento \"{}\" duplicato.".format(event.name), "info")
 
     return redirect(url_for("events.index"))

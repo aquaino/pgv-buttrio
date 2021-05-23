@@ -4,6 +4,7 @@ from app.auth import login_required
 from app.models import db, User, UserSubtypeAssociation, UserSubtype, UserType
 from datetime import datetime
 from app.forms import NewUpdateUserForm, ConfirmActionForm
+from sqlalchemy.orm.session import make_transient
 
 bp = Blueprint("users", __name__, url_prefix="/users")
 
@@ -75,3 +76,34 @@ def confirm_deletion(user_id):
         return redirect(url_for("users.index"))
 
     return render_template("confirm_action.html", form=form, active_page="users.index", page_title="Conferma eliminazione volontario", item_name=fullname)
+
+@bp.route('/<int:user_id>/duplicate')
+@login_required
+def duplicate_user(user_id):
+    """Duplicate a user."""
+    user = User.query.filter_by(id=user_id).first()
+    if user is None:
+        abort(404)
+
+    assoc = UserSubtypeAssociation.query.filter_by(user_id=user.id).first()
+    old_email = user.email1
+    
+    # Clone the user with a new id and also his subtype association
+    db.session.expunge(user)
+    db.session.expunge(assoc)
+    make_transient(user)
+    make_transient(assoc)
+    user.id = None
+    user.email1 = old_email + "-copy"
+    assoc.id = None
+    db.session.add(user)
+    db.session.commit()
+
+    assoc.user_id = user.id
+    db.session.add(assoc)
+    db.session.commit()
+
+    fullname = "{} {}".format(user.firstname, user.lastname)
+    flash("Utente \"{}\" duplicato.".format(fullname), "info")
+
+    return redirect(url_for("users.index"))
