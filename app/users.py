@@ -14,18 +14,16 @@ def index():
     """Show all users, organized by type."""
 
     def users_by_type(type):
+        """General query structure for different type of users."""
         users = User.query\
             .with_entities(User.id, User.firstname, User.lastname, User.gender, User.born_on, User.born_in, User.zip, User.city, User.address, User.email1, User.email2, User.tel1, User.tel2, User.notes, UserSubtype.name.label("subtype_name"))\
             .join(UserSubtypeAssociation, UserSubtypeAssociation.user_id == User.id)\
             .join(UserSubtype, UserSubtype.id == UserSubtypeAssociation.subtype_id)\
             .join(UserType, UserType.id == UserSubtype.type_id)\
             .filter(UserType.name == type)\
+            .order_by(User.lastname)\
             .all()
 
-        # Change date format
-        # for user in users:
-        #     if user[3]:
-        #         user[3] = datetime.strptime(str(user.born_on), "%Y-%m-%d").strftime("%d/%m/%Y")
         return users
 
 
@@ -87,7 +85,7 @@ def duplicate_user(user_id):
 
     assoc = UserSubtypeAssociation.query.filter_by(user_id=user.id).first()
     old_email = user.email1
-    
+
     # Clone the user with a new id and also his subtype association
     db.session.expunge(user)
     db.session.expunge(assoc)

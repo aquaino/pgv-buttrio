@@ -1,10 +1,11 @@
 from flask import Flask
-from datetime import datetime
 from flask_migrate import Migrate
 from app.models import db, User, UserType, UserSubtype, GreenBookCategory, Event, Activity, UserSubtypeAssociation
 import click
 from werkzeug.security import generate_password_hash
 from flask.cli import with_appcontext
+from datetime import datetime
+from flask_moment import Moment
 
 
 def create_app(test_config=None):
@@ -16,6 +17,9 @@ def create_app(test_config=None):
         SQLALCHEMY_DATABASE_URI="postgresql://pgv_user:i1oTQ0lW_@localhost:5432/pgv_db",
         SQLALCHEMY_TRACK_MODIFICATIONS=False,
     )
+
+    # Initialize Moment extension for formatting dates and times
+    moment = Moment(app)
 
     # Set up the database
     db.init_app(app)
@@ -107,11 +111,5 @@ def create_app(test_config=None):
 
     # Home = activity records
     app.add_url_rule('/', endpoint='index')
-
-    # Inject these functions in all templates
-    # For current year in footer
-    @app.context_processor
-    def inject_now():
-        return {'now': datetime.utcnow()}
 
     return app

@@ -22,8 +22,6 @@ class User(db.Model):
     notes = db.Column(db.Text())
     admin = db.Column(db.Boolean(), default=False)
     password = db.Column(db.String())
-    created_at = db.Column(db.DateTime(), default=datetime.datetime.utcnow)
-    deleted_at =db.Column(db.DateTime())
 
 class UserSubtype(db.Model):
     __tablename__ = "user_subtypes"
@@ -49,13 +47,12 @@ class UserSubtypeAssociation(db.Model):
     user = db.relationship('User', backref=db.backref('user_subtype_associations', lazy=True))
     subtype_id = db.Column(db.Integer, db.ForeignKey('user_subtypes.id'), nullable=False)
     subtype = db.relationship('UserSubtype', backref=db.backref('user_subtype_associations', lazy=True))
-    year = db.Column(db.Integer)
 
 class GreenBookCategory(db.Model):
     __tablename__ = "green_book_categories"
 
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(), nullable=False)
+    name = db.Column(db.String(), nullable=False, unique=True)
     descr = db.Column(db.Text())
 
 class Event(db.Model):
@@ -64,14 +61,14 @@ class Event(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     green_book_cat_id = db.Column(db.Integer, db.ForeignKey('green_book_categories.id'), nullable=False)
     green_book_cat = db.relationship('GreenBookCategory', backref=db.backref('events', lazy=True))
-    name = db.Column(db.String(), nullable=False)
+    name = db.Column(db.String(), nullable=False, unique=True)
     descr = db.Column(db.Text())
 
 class Activity(db.Model):
     __tablename__ = "activities"
 
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(), nullable=False)
+    name = db.Column(db.String(), nullable=False, unique=True)
     descr = db.Column(db.Text())
 
 class ActivityRecord(db.Model):

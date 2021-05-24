@@ -54,7 +54,11 @@
             <td>{{ replace_if_none(user.lastname) }}</td>
             <td>{{ replace_if_none(user.firstname) }}</td>
             <td>{{ replace_if_none(user.gender) }}</td>
-            <td>{{ replace_if_none(user.born_on) }}</td>
+            {% if user.born_on == None %}
+              <td>{{ replace_if_none(user.born_on) }}</td>
+            {% else %}
+              <td>{{ moment(user.born_on).format('L') }}</td>
+            {% endif %}
             <td>{{ replace_if_none(user.born_in) }}</td>
             <td>{{ replace_if_none(user.zip) }}</td>
             <td>{{ replace_if_none(user.city) }}</td>
