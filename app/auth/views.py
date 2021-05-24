@@ -1,5 +1,4 @@
 import functools
-
 from flask import Blueprint
 from flask import flash
 from flask import g
@@ -11,10 +10,9 @@ from flask import url_for
 from werkzeug.security import check_password_hash
 from werkzeug.security import generate_password_hash
 from app.models import db, User
-from .forms import LoginForm
+from app.auth.forms import LoginForm
 
 bp = Blueprint("auth", __name__, url_prefix="/auth")
-
 
 def login_required(view):
     """View decorator that redirects anonymous users to the login page."""

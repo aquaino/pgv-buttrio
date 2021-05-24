@@ -1,9 +1,10 @@
 from flask import Blueprint, flash, abort, redirect, url_for
 from flask import render_template
-from app.auth import login_required
+from app.auth.views import login_required
 from app.models import db, User, UserSubtypeAssociation, UserSubtype, UserType
 from datetime import datetime
-from app.forms import NewUpdateUserForm, ConfirmActionForm
+from app.users.forms import NewUpdateUserForm
+from app.forms import ConfirmActionForm
 from sqlalchemy.orm.session import make_transient
 
 bp = Blueprint("users", __name__, url_prefix="/users")

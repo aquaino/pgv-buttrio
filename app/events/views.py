@@ -1,13 +1,13 @@
 from flask import Blueprint
 from flask import render_template
-from app.auth import login_required
+from app.auth.views import login_required
 from app.models import db, Event, GreenBookCategory
-from app.forms import NewUpdateEventForm, ConfirmActionForm
+from app.events.forms import NewUpdateEventForm
+from app.forms import ConfirmActionForm
 from flask import flash, redirect, url_for, abort
 from sqlalchemy.orm.session import make_transient
 
 bp = Blueprint("events", __name__, url_prefix="/events")
-
 
 @bp.route("/")
 @login_required
