@@ -1,23 +1,40 @@
+{% macro render_field_errors(field_name) %}
+  <div class="form-text text-danger" role="alert">
+    {% for error in field_name.errors %}
+      {{ error }}
+    {% endfor %}
+  </div>
+{% endmacro %}
+
 {% macro render_field(field_name, field_type) %}
   {% if field_type == "simple" %}
     <div class="row mb-3">
       {{ field_name.label(class="col-md-4 col-lg-2 col-form-label") }}
-      <div class="col-md-8 col-lg-6">
+      <div class="col-md-8 col-lg-4">
         {{ field_name(class="form-control") }}
+        {% if field_name.errors %}
+          {{ render_field_errors(field_name) }}
+        {% endif %}
       </div>
     </div>
   {% elif field_type == "select" %}
     <div class="row mb-3">
       {{ field_name.label(class="col-md-4 col-lg-2 col-form-label") }}
-      <div class="col-md-8 col-lg-6">
+      <div class="col-md-8 col-lg-4">
         {{ field_name(class="form-select") }}
+        {% if field_name.errors %}
+          {{ render_field_errors(field_name) }}
+        {% endif %}
       </div>
     </div>
   {% elif field_type == "text" %}
     <div class="row mb-3">
       {{ field_name.label(class="col-md-4 col-lg-2 col-form-label") }}
-      <div class="col-md-8 col-lg-6">
+      <div class="col-md-8 col-lg-4">
         {{ field_name(class="form-control") }}
+        {% if field_name.errors %}
+          {{ render_field_errors(field_name) }}
+        {% endif %}
       </div>
     </div>
   {% endif %}

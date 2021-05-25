@@ -74,7 +74,7 @@ def confirm_deletion(user_id):
         flash("Volontario \"{}\" eliminato.".format(fullname), "info")
         return redirect(url_for("users.index"))
 
-    return render_template("confirm_action.html", form=form, active_page="users.index", page_title="Conferma eliminazione volontario", item_name=fullname)
+    return render_template("confirm_deletion.html", form=form, active_page="users.index", page_title="Eliminazione volontario", item_name=fullname)
 
 @bp.route('/<int:user_id>/duplicate')
 @login_required

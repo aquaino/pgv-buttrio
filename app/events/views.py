@@ -51,7 +51,7 @@ def confirm_deletion(event_id):
         flash("Evento \"{}\" eliminato.".format(event.name), "info")
         return redirect(url_for("events.index"))
 
-    return render_template("confirm_action.html", form=form, active_page="events.index", page_title="Conferma eliminazione evento", item_name=event.name)
+    return render_template("confirm_deletion.html", form=form, active_page="events.index", page_title="Eliminazione evento", item_name=event.name)
 
 @bp.route('/<int:event_id>/update', methods=("GET", "POST"))
 @login_required
@@ -89,9 +89,11 @@ def duplicate_event(event_id):
         abort(404)
 
     # Clone the event with a new id
+    old_name = event.name
     db.session.expunge(event)
     make_transient(event)
     event.id = None
+    event.name = old_name + "-copy"
     db.session.add(event)
     db.session.commit()
     flash("Evento \"{}\" duplicato.".format(event.name), "info")
