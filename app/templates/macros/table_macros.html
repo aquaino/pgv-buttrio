@@ -72,7 +72,7 @@
             <td class="text-center">
               <a class="me-1" href="#" title="Modifica"><i class="bi bi-gear-fill text-primary"></i></a>
               <a class="me-1" href="{{ url_for('users.duplicate_user', user_id=user.id) }}" title="Duplica"><i class="bi bi-file-earmark-plus-fill text-primary"></i></a>
-              <a class="me-1" href="{{ url_for('users.confirm_deletion', user_id=user.id) }}" title="Elimina"><i class="bi bi-trash-fill text-primary"></i></a>
+              <a class="me-1" href="{{ url_for('users.delete_user', user_id=user.id, subtype_id=user.subtype_id) }}" title="Elimina"><i class="bi bi-trash-fill text-primary"></i></a>
             </td>
           </tr>
           {% endfor %}

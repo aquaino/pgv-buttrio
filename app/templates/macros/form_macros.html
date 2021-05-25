@@ -1,39 +1,69 @@
-{% macro render_field_errors(field_name) %}
-  <div class="form-text text-danger" role="alert">
-    {% for error in field_name.errors %}
+{% macro render_field_errors(field) %}
+  <div class="form-text text-danger">
+    {% for error in field.errors %}
       {{ error }}
     {% endfor %}
   </div>
 {% endmacro %}
 
-{% macro render_field(field_name, field_type) %}
+{% macro render_field(field, field_type) %}
   {% if field_type == "simple" %}
     <div class="row mb-3">
-      {{ field_name.label(class="col-md-4 col-lg-2 col-form-label") }}
+      {{ field.label(class="col-md-4 col-lg-2 col-form-label") }}
       <div class="col-md-8 col-lg-4">
-        {{ field_name(class="form-control") }}
-        {% if field_name.errors %}
-          {{ render_field_errors(field_name) }}
+        {{ field(class="form-control") }}
+        {% if field.description %}
+          <div class="form-text">
+            {{ field.description }}
+          </div>
+        {% endif %}
+        {% if field.errors %}
+          {{ render_field_errors(field) }}
         {% endif %}
       </div>
     </div>
   {% elif field_type == "select" %}
     <div class="row mb-3">
-      {{ field_name.label(class="col-md-4 col-lg-2 col-form-label") }}
+      {{ field.label(class="col-md-4 col-lg-2 col-form-label") }}
       <div class="col-md-8 col-lg-4">
-        {{ field_name(class="form-select") }}
-        {% if field_name.errors %}
-          {{ render_field_errors(field_name) }}
+        {{ field(class="form-select") }}
+        {% if field.description %}
+          <div class="form-text">
+            {{ field.description }}
+          </div>
+        {% endif %}
+        {% if field.errors %}
+          {{ render_field_errors(field) }}
+        {% endif %}
+      </div>
+    </div>
+  {% elif field_type == "multiple-select" %}
+    <div class="row mb-3">
+      {{ field.label(class="col-md-4 col-lg-2 col-form-label") }}
+      <div class="col-md-8 col-lg-4">
+        {{ field(class="form-select", size=field.choices|length) }}
+        {% if field.description %}
+          <div class="form-text">
+            {{ field.description }}
+          </div>
+        {% endif %}
+        {% if field.errors %}
+          {{ render_field_errors(field) }}
         {% endif %}
       </div>
     </div>
   {% elif field_type == "text" %}
     <div class="row mb-3">
-      {{ field_name.label(class="col-md-4 col-lg-2 col-form-label") }}
+      {{ field.label(class="col-md-4 col-lg-2 col-form-label") }}
       <div class="col-md-8 col-lg-4">
-        {{ field_name(class="form-control") }}
-        {% if field_name.errors %}
-          {{ render_field_errors(field_name) }}
+        {{ field(class="form-control") }}
+        {% if field.description %}
+          <div class="form-text">
+            {{ field.description }}
+          </div>
+        {% endif %}
+        {% if field.errors %}
+          {{ render_field_errors(field) }}
         {% endif %}
       </div>
     </div>

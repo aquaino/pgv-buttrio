@@ -21,7 +21,7 @@
   {% endif %}
   {{ form.csrf_token }}
 
-  {{ form_macros.render_field(form.subtype, "select") }}
+  {{ form_macros.render_field(form.subtype, "multiple-select") }}
   {{ form_macros.render_field(form.firstname, "simple") }}
   {{ form_macros.render_field(form.lastname, "simple") }}
   {{ form_macros.render_field(form.gender, "select") }}

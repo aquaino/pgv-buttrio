@@ -27,7 +27,7 @@ class UserSubtype(db.Model):
     __tablename__ = "user_subtypes"
 
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(), nullable=False)
+    name = db.Column(db.String(), nullable=False, unique=True)
     type_id = db.Column(db.Integer, db.ForeignKey('user_types.id'), nullable=False)
     type = db.relationship('UserType', backref=db.backref('user_subtypes', lazy=True))
     descr = db.Column(db.Text())
@@ -35,7 +35,7 @@ class UserSubtype(db.Model):
 class UserType(db.Model):
     __tablename__ = "user_types"
 
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True, unique=True)
     name = db.Column(db.String(), nullable=False)
     descr = db.Column(db.Text())
 

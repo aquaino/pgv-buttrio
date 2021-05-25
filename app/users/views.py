@@ -1,10 +1,8 @@
-from flask import Blueprint, flash, abort, redirect, url_for
-from flask import render_template
+from flask import Blueprint, flash, abort, redirect, url_for, render_template, request
 from app.auth.views import login_required
 from app.models import db, User, UserSubtypeAssociation, UserSubtype, UserType
 from datetime import datetime
-from app.users.forms import NewUpdateUserForm
-from app.forms import ConfirmActionForm
+from app.users.forms import NewUpdateUserForm, ConfirmUserDeletionForm
 from sqlalchemy.orm.session import make_transient
 
 bp = Blueprint("users", __name__, url_prefix="/users")
@@ -12,97 +10,125 @@ bp = Blueprint("users", __name__, url_prefix="/users")
 @bp.route("/")
 @login_required
 def index():
-    """Show all users, organized by type."""
+	"""Show all users, organized by type."""
 
-    def users_by_type(type):
-        """General query structure for different type of users."""
-        users = User.query\
-            .with_entities(User.id, User.firstname, User.lastname, User.gender, User.born_on, User.born_in, User.zip, User.city, User.address, User.email1, User.email2, User.tel1, User.tel2, User.notes, UserSubtype.name.label("subtype_name"))\
-            .join(UserSubtypeAssociation, UserSubtypeAssociation.user_id == User.id)\
-            .join(UserSubtype, UserSubtype.id == UserSubtypeAssociation.subtype_id)\
-            .join(UserType, UserType.id == UserSubtype.type_id)\
-            .filter(UserType.name == type)\
-            .order_by(User.lastname)\
-            .all()
+	def users_by_type(type_name):
+		"""General query structure for different type of users."""
+		users = User.query\
+			.with_entities(User.id, User.firstname, User.lastname, User.gender, User.born_on, User.born_in, User.zip, User.city, User.address, User.email1, User.email2, User.tel1, User.tel2, User.notes, UserSubtype.name.label("subtype_name"), UserSubtype.id.label("subtype_id"))\
+			.join(UserSubtypeAssociation, UserSubtypeAssociation.user_id == User.id)\
+			.join(UserSubtype, UserSubtype.id == UserSubtypeAssociation.subtype_id)\
+			.join(UserType, UserType.id == UserSubtype.type_id)\
+			.filter(UserType.name == type_name)\
+			.order_by(User.lastname)\
+			.all()
 
-        return users
+		return users
 
 
-    pc = users_by_type("Protezione Civile")
-    alpini = users_by_type("Alpini")
-    occasionali = users_by_type("Volontari occasionali")
-    non_assicurati = users_by_type("Esterni non assicurati")
+	pc = users_by_type("Protezione Civile")
+	alpini = users_by_type("Alpini")
+	occasionali = users_by_type("Volontari occasionali")
+	non_assicurati = users_by_type("Esterni non assicurati")
 
-    return render_template("users/index.html", pc=pc, alpini=alpini, occasionali=occasionali, non_assicurati=non_assicurati)
+	return render_template("users/index.html", pc=pc, alpini=alpini, occasionali=occasionali, non_assicurati=non_assicurati)
 
 @bp.route("/new-user", methods=("GET", "POST"))
 @login_required
 def new_user():
-    """Create a new user."""
-    form = NewUpdateUserForm()
-    # Flatten the query result to a list of tuples (id, name)
-    # This way the option values of the select field in the form are the GB categories ids
-    # form.gb_category.choices = [(row.id, row.name) for row in GreenBookCategory.query.with_entities(GreenBookCategory.id, GreenBookCategory.name)]
+	"""Create a new user."""
+	subtype_choices = [(row.id, row.name) for row in UserSubtype.query.with_entities(UserSubtype.id, UserSubtype.name)]
+	form = NewUpdateUserForm(subtype=[subtype_choices[0][0]])
+	form.gender.choices = ["Non specificato", "Uomo", "Donna"]
+	form.subtype.choices = subtype_choices
+	form.subtype.default = [1]
 
-    if form.validate_on_submit():
-        user = User()
-        db.session.add(user)
-        db.session.commit()
+	if form.validate_on_submit():
+		# Create the user
+		user = User(firstname=form.firstname.data, lastname=form.lastname.data, gender=form.gender.data, born_on=form.born_on.data, born_in=form.born_in.data, zip=form.zip.data, city=form.city.data, address=form.address.data, email1=form.email1.data, email2=form.email2.data, tel1=form.tel1.data, tel2=form.tel2.data, notes=form.notes.data)
+		db.session.add(user)
+		db.session.commit()
 
-        flash("Utente \"{} {}\" aggiunto.".format(user.firstname, user.lastname), "info")
-        return redirect(url_for("users.new_user", action="new"))
+		# Set user's subtype/s
+		for subtype_id in form.subtype.data:
+			assoc = UserSubtypeAssociation(user_id=user.id, subtype_id=subtype_id)
+			db.session.add(assoc)
 
-    return render_template("users/new_update_user.html", form=form, action="new")
+		db.session.commit()
 
-@bp.route('/<int:user_id>/confirm_deletion', methods=("GET", "POST"))
+		flash("Utente \"{} {}\" aggiunto.".format(user.firstname, user.lastname), "info")
+		return redirect(url_for("users.new_user", action="new"))
+
+	return render_template("users/new_update_user.html", form=form, action="new")
+
+@bp.route('/<int:user_id>/delete', methods=("GET", "POST"))
 @login_required
-def confirm_deletion(user_id):
-    """Confirm the deletion of a user."""
-    user = User.query.filter_by(id=user_id).first()
-    if user is None:
-        abort(404)
+def delete_user(user_id):
+	"""Confirm the deletion of a user."""
+	user = User.query.filter_by(id=user_id).first()
+	if user is None:
+		abort(404)
 
-    fullname = "{} {}".format(user.firstname, user.lastname)
-    form = ConfirmActionForm()
-    if form.validate_on_submit():
-        # Remove user subtype association
-        subtype_assoc = UserSubtypeAssociation.query.filter_by(user_id=user.id).first()
-        db.session.delete(subtype_assoc)
-        db.session.delete(user)
-        db.session.commit()
+	fullname = "{} {}".format(user.firstname, user.lastname)
+	form = ConfirmUserDeletionForm(subtype=[int(request.args.get("subtype_id"))])
 
-        flash("Volontario \"{}\" eliminato.".format(fullname), "info")
-        return redirect(url_for("users.index"))
+	subtype_choices = UserSubtypeAssociation.query\
+		.with_entities(UserSubtype.id, UserSubtype.name)\
+		.join(UserSubtypeAssociation, UserSubtypeAssociation.subtype_id == UserSubtype.id)\
+		.filter(UserSubtypeAssociation.user_id==user_id)\
+		.all()
+	form.subtype.choices = [(row.id, row.name) for row in subtype_choices]
 
-    return render_template("confirm_deletion.html", form=form, active_page="users.index", page_title="Eliminazione volontario", item_name=fullname)
+	if form.validate_on_submit():
+		# Remove specified user subtype association/s
+		for subtype_id in form.subtype.data:
+			assoc = UserSubtypeAssociation.query.filter_by(user_id=user_id, subtype_id=subtype_id).first()
+			db.session.delete(assoc)
+
+		# If all the subtypes were selected, remove also the user
+		removed_from_all = False
+		if len(form.subtype.data) == len(form.subtype.choices):
+			db.session.delete(user)
+			removed_from_all = True
+
+		db.session.commit()
+
+		if removed_from_all:
+			flash("Volontario \"{}\" rimosso dal sistema.".format(fullname), "info")
+		else:
+			flash("Volontario \"{}\" eliminato dai gruppi selezionati.".format(fullname), "info")
+
+		return redirect(url_for("users.index"))
+
+	return render_template("users/confirm_user_deletion.html", form=form, active_page="users.index", page_title="Eliminazione volontario", item_name=fullname)
 
 @bp.route('/<int:user_id>/duplicate')
 @login_required
 def duplicate_user(user_id):
-    """Duplicate a user."""
-    user = User.query.filter_by(id=user_id).first()
-    if user is None:
-        abort(404)
+	"""Duplicate a user."""
+	user = User.query.filter_by(id=user_id).first()
+	if user is None:
+		abort(404)
 
-    assoc = UserSubtypeAssociation.query.filter_by(user_id=user.id).first()
-    old_email = user.email1
+	assoc = UserSubtypeAssociation.query.filter_by(user_id=user.id).first()
+	old_email = user.email1
 
-    # Clone the user with a new id and also his subtype association
-    db.session.expunge(user)
-    db.session.expunge(assoc)
-    make_transient(user)
-    make_transient(assoc)
-    user.id = None
-    user.email1 = old_email + "-copy"
-    assoc.id = None
-    db.session.add(user)
-    db.session.commit()
+	# Clone the user with a new id and also his subtype association
+	db.session.expunge(user)
+	db.session.expunge(assoc)
+	make_transient(user)
+	make_transient(assoc)
+	user.id = None
+	user.email1 = old_email + "-copy"
+	assoc.id = None
+	db.session.add(user)
+	db.session.commit()
 
-    assoc.user_id = user.id
-    db.session.add(assoc)
-    db.session.commit()
+	assoc.user_id = user.id
+	db.session.add(assoc)
+	db.session.commit()
 
-    fullname = "{} {}".format(user.firstname, user.lastname)
-    flash("Utente \"{}\" duplicato.".format(fullname), "info")
+	fullname = "{} {}".format(user.firstname, user.lastname)
+	flash("Utente \"{}\" duplicato.".format(fullname), "info")
 
-    return redirect(url_for("users.index"))
+	return redirect(url_for("users.index"))
