@@ -2,16 +2,18 @@ from flask import Flask
 from flask_migrate import Migrate
 from app.models import db
 from flask_moment import Moment
-
+import os
 
 def create_app(test_config=None):
     """Create and configure an instance of the Flask application."""
-    # Create and configure the app
+    # Create and configure the app (from .flaskenv file)
     app = Flask(__name__)
-    app.config.update(
-        SECRET_KEY="dev",
-        SQLALCHEMY_DATABASE_URI="postgresql://pgv_user:i1oTQ0lW_@localhost:5432/pgv_db",
-        SQLALCHEMY_TRACK_MODIFICATIONS=False,
+    app.config.update (
+        FLASK_APP=os.environ.get("FLASK_APP"),
+        FLASK_ENV=os.environ.get("FLASK_ENV"),
+        SECRET_KEY=os.environ.get("SECRET_KEY"),
+        SQLALCHEMY_DATABASE_URI=os.environ.get("SQLALCHEMY_DATABASE_URI"),
+        SQLALCHEMY_TRACK_MODIFICATIONS=False
     )
 
     # Initialize Moment extension for formatting dates and times
@@ -29,7 +31,7 @@ def create_app(test_config=None):
     app.register_blueprint(activities.bp)
 
     # Import CLI commands
-    from app.commands import recreate_db_command, setup_db_command  
+    from app.commands import recreate_db_command, setup_db_command
     app.cli.add_command(recreate_db_command)
     app.cli.add_command(setup_db_command)
 

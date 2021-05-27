@@ -4,6 +4,7 @@ from app.models import db, User, UserSubtypeAssociation, UserSubtype, UserType
 from datetime import datetime
 from app.users.forms import NewUpdateUserForm, ConfirmUserDeletionForm
 from sqlalchemy.orm.session import make_transient
+import random
 
 bp = Blueprint("users", __name__, url_prefix="/users")
 
@@ -110,7 +111,8 @@ def duplicate_user(user_id):
 	if user is None:
 		abort(404)
 
-	assoc = UserSubtypeAssociation.query.filter_by(user_id=user.id).first()
+	# Colne only the current subtype association
+	assoc = UserSubtypeAssociation.query.filter_by(user_id=user_id, subtype_id=int(request.args.get("subtype_id"))).first()
 	old_email = user.email1
 
 	# Clone the user with a new id and also his subtype association
@@ -119,7 +121,7 @@ def duplicate_user(user_id):
 	make_transient(user)
 	make_transient(assoc)
 	user.id = None
-	user.email1 = old_email + "-copy"
+	user.email1 = "{}-{}".format(old_email, str(random.randint(0, 999)))
 	assoc.id = None
 	db.session.add(user)
 	db.session.commit()

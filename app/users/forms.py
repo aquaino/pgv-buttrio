@@ -2,6 +2,7 @@ from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField, TextAreaField, SelectField, SelectMultipleField
 from wtforms.fields.html5 import EmailField, TelField, DateField
 from wtforms.validators import InputRequired, Optional, ValidationError
+from app.models import User
 
 def only_numbers(form, data):
     """Validate if a string is made of digits (no text)."""
@@ -24,6 +25,11 @@ class NewUpdateUserForm(FlaskForm):
     tel2 = TelField("Numero di telefono secondario", validators=[Optional(), only_numbers])
     notes = TextAreaField("Note", filters=[lambda x: x or None])
     submit = SubmitField("OK")
+
+    def validate_email1(form, email1):
+        """Check if already exists a user with the same primary email."""
+        if User.query.filter_by(email1=email1.data).first():
+            raise ValidationError("Esiste già un utente con questo indirizzo email primario.")
 
 class ConfirmUserDeletionForm(FlaskForm):
     subtype = SelectMultipleField("Da quali gruppi si desidera rimuovere il volontario?", description="È possibile selezionare più gruppi. Selezionandoli tutti il volontario verrà rimosso dal sistema.", validators=[InputRequired()], coerce=int)

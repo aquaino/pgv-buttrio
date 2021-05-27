@@ -6,6 +6,7 @@ from app.events.forms import NewUpdateEventForm
 from app.forms import ConfirmActionForm
 from flask import flash, redirect, url_for, abort
 from sqlalchemy.orm.session import make_transient
+import random
 
 bp = Blueprint("events", __name__, url_prefix="/events")
 
@@ -36,9 +37,9 @@ def new_event():
 
     return render_template("events/new_update_event.html", form=form, action="new")
 
-@bp.route('/<int:event_id>/confirm_deletion', methods=("GET", "POST"))
+@bp.route('/<int:event_id>/delete', methods=("GET", "POST"))
 @login_required
-def confirm_deletion(event_id):
+def delete_event(event_id):
     """Confirm the deletion of an event."""
     event = Event.query.filter_by(id=event_id).first()
     if event is None:
@@ -93,9 +94,9 @@ def duplicate_event(event_id):
     db.session.expunge(event)
     make_transient(event)
     event.id = None
-    event.name = old_name + "-copy"
+    event.name = "{}-{}".format(old_name, str(random.randint(0, 999)))
     db.session.add(event)
     db.session.commit()
-    flash("Evento \"{}\" duplicato.".format(event.name), "info")
+    flash("Evento \"{}\" duplicato.".format(old_name), "info")
 
     return redirect(url_for("events.index"))
