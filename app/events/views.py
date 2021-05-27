@@ -73,7 +73,6 @@ def update_event(event_id):
         event.name = form.name.data
         event.descr = form.descr.data
 
-        db.session.add(event)
         db.session.commit()
 
         flash("Evento \"{}\" modificato.".format(event.name), "info")

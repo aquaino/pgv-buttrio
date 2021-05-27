@@ -9,7 +9,7 @@ def only_numbers(form, data):
     if not data.data.isdecimal():
         raise ValidationError("Un numero di telefono non può contenere caratteri testuali.")
 
-class NewUpdateUserForm(FlaskForm):
+class NewUserForm(FlaskForm):
     subtype = SelectMultipleField("Tipologia volontario*", description="È possibile selezionare più tipologie di volontariato.", validators=[InputRequired()], coerce=int)
     firstname = StringField("Nome*", validators=[InputRequired()])
     lastname = StringField("Cognome*", validators=[InputRequired()])
@@ -30,6 +30,11 @@ class NewUpdateUserForm(FlaskForm):
         """Check if already exists a user with the same primary email."""
         if User.query.filter_by(email1=email1.data).first():
             raise ValidationError("Esiste già un utente con questo indirizzo email primario.")
+
+class UpdateUserForm(NewUserForm):
+    # Avoid email1 validation on user update
+    def validate_email1(form, email1):
+        pass
 
 class ConfirmUserDeletionForm(FlaskForm):
     subtype = SelectMultipleField("Da quali gruppi si desidera rimuovere il volontario?", description="È possibile selezionare più gruppi. Selezionandoli tutti il volontario verrà rimosso dal sistema.", validators=[InputRequired()], coerce=int)
