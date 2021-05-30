@@ -131,3 +131,53 @@
     </div>
   </div>
 {% endmacro %}
+
+{% macro render_activities_table(title, activities) %}
+  <h4 class="border-start border-primary border-4 ps-2 mt-4">{{ title }}</h4>
+  {% set headers = ["Data", "Volontario", "Tipologia vol.", "Evento", "Attività", "Inizio", "Fine", "Luogo", "Note"] %}
+  <div class="mx-auto mt-3">
+    <div class="table-responsive">
+      {% set table_id = title.replace(" ", "-").lower() + "-table" %}
+      <table id="{{ table_id }}" class="table table-sm">
+        <thead>
+          <tr>
+            {% for header in headers%}
+              <th>{{ header }}</th>
+            {% endfor %}
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for activity in activities %}
+          <tr>
+            <td>{{ moment(activity.date).format('L') }}</td>
+            {% with user = activity.firstname + " " + activity.lastname %}
+              <td>{{ user }}</td>
+            {% endwith %}
+            <td>{{ activity.subtype }}</td>
+            <td>{{ activity.event }}</td>
+            <td>{{ activity.activity }}</td>
+            <td>{{ activity.start_time }}</td>
+            <td>{{ activity.end_time }}</td>
+            <td>{{ activity.location }}</td>
+            <td>{{ replace_if_none(activity.notes) }}</td>
+            <td class="text-center">
+              <a class="me-1" href="#" title="Modifica"><i class="bi bi-gear-fill text-primary"></i></a>
+              <a class="me-1" href="#" title="Duplica"><i class="bi bi-file-earmark-plus-fill text-primary"></i></a>
+              <a class="me-1" href="#" title="Elimina"><i class="bi bi-trash-fill text-primary"></i></a>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+        <tfoot>
+          <tr>
+            {% for header in headers%}
+              <th>{{ header }}</th>
+            {% endfor %}
+          </tr>
+        </tfoot>
+      </table>
+      {{ table_scripts(table_id) }}
+    </div>
+  </div>
+{% endmacro %}
