@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% set active_page = "activities.index" %}
+
+{% import "macros/form_macros.html" as form_macros %}
+
+{% if action == "new" %}
+  {% set page_title = "Nuova attività" %}
+  {% set page_icon = "bi-person-plus-fill" %}
+{% elif action == "update" %}
+  {% set page_title = "Modifica attività" %}
+  {% set page_icon = "bi-gear-fill" %}
+  {% set hidden_method = "PATCH" %}
+{% endif %}
+
+{% block content %}
+<h2 class="py-2"><i class="bi {{ page_icon }} text-primary me-2"></i>{{ page_title }}</h2>
+<h4 class="border-start border-primary border-4 ps-2 mt-3">Dati dell'attività</h4>
+<form method="POST" class="mt-3">
+  {% if action == "update" %}
+    <input type="hidden" name="_method" value="{{ hidden_method }}">
+  {% endif %}
+  {{ form.csrf_token }}
+
+  {{ form_macros.render_field(form.subtype, "select") }}
+  {{ form_macros.render_field(form.user, "select") }}
+  {{ form_macros.render_field(form.date, "simple") }}
+  {{ form_macros.render_field(form.event, "select") }}
+  {{ form_macros.render_field(form.activity, "select") }}
+  {{ form_macros.render_field(form.start_time, "simple") }}
+  {{ form_macros.render_field(form.end_time, "simple") }}
+  {{ form_macros.render_field(form.location, "simple") }}
+  {{ form_macros.render_field(form.notes, "text") }}
+
+  {{ form.submit(class="btn btn-success") }}
+  <a href="{{ url_for('users.index') }}" type="button" class="btn btn-danger">Annulla</a>
+</form>
+{% endblock %}

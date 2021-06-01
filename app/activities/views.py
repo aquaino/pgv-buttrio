@@ -1,8 +1,10 @@
 from flask import Blueprint, render_template, flash, abort, redirect, url_for
 from app.auth.views import login_required
 from app.models import db, ActivityRecord, User, UserSubtypeAssociation, UserSubtype, Activity, Event
+from app.activities.forms import NewUpdateActivityRecordForm
 from app.forms import ConfirmActionForm
 from sqlalchemy.orm.session import make_transient
+from sqlalchemy import desc
 
 bp = Blueprint("activities", __name__)
 
@@ -17,7 +19,7 @@ def index():
         .join(UserSubtype, UserSubtype.id == UserSubtypeAssociation.subtype_id)\
         .join(Activity, Activity.id == ActivityRecord.activity_id)\
         .join(Event, Event.id == ActivityRecord.event_id)\
-        .order_by(ActivityRecord.date)\
+        .order_by(desc(ActivityRecord.date))\
         .all()
 
     return render_template("activities/index.html", activities=activities)
@@ -72,3 +74,26 @@ def duplicate_activity(activity_id):
     flash("Record attività \"{}\" duplicato.".format(activity_record_name), "info")
 
     return redirect(url_for("activities.index"))
+
+@bp.route("/new-activity", methods=("GET", "POST"))
+@login_required
+def new_activity():
+    """Create a new activity record."""
+    form = NewUpdateActivityRecordForm()
+
+    # Populate select fields
+    form.subtype.choices = [(row.id, row.name) for row in UserSubtype.query.with_entities(UserSubtype.id, UserSubtype.name)]
+    form.user.choices = [(row.id, row.firstname + " " + row.lastname) for row in User.query.with_entities(User.id, User.firstname, User.lastname).filter(User.email1 != "admin@admin.it")]
+    form.event.choices = [(row.id, row.name) for row in Event.query.with_entities(Event.id, Event.name)]
+    form.activity.choices = [(row.id, row.name) for row in Activity.query.with_entities(Activity.id, Activity.name)]
+
+    if form.validate_on_submit():
+        # Create the record
+        record = ActivityRecord(date=form.date.data, user_id=form.user.data, event_id=form.event.data, activity_id=form.activity.data, start_time=form.start_time.data, end_time=form.end_time.data, location=form.location.data, notes=form.notes.data)
+        db.session.add(record)
+        db.session.commit()
+
+        flash("Record attività aggiunto.", "info")
+        return redirect(url_for("activities.new_activity", action="new"))
+
+    return render_template("activities/new_update_activity.html", form=form, action="new")
