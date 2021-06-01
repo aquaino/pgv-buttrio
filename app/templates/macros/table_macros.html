@@ -163,8 +163,8 @@
             <td>{{ replace_if_none(activity.notes) }}</td>
             <td class="text-center">
               <a class="me-1" href="#" title="Modifica"><i class="bi bi-gear-fill text-primary"></i></a>
-              <a class="me-1" href="#" title="Duplica"><i class="bi bi-file-earmark-plus-fill text-primary"></i></a>
-              <a class="me-1" href="#" title="Elimina"><i class="bi bi-trash-fill text-primary"></i></a>
+              <a class="me-1" href="{{ url_for('activities.duplicate_activity', activity_id=activity.id) }}" title="Duplica"><i class="bi bi-file-earmark-plus-fill text-primary"></i></a>
+              <a class="me-1" href="{{ url_for('activities.delete_activity', activity_id=activity.id) }}" title="Elimina"><i class="bi bi-trash-fill text-primary"></i></a>
             </td>
           </tr>
           {% endfor %}
