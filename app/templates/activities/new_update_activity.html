@@ -34,4 +34,40 @@
   {{ form.submit(class="btn btn-success") }}
   <a href="{{ url_for('users.index') }}" type="button" class="btn btn-danger">Annulla</a>
 </form>
+
+<script>
+  $(document).ready(function() {
+    // Get select fields
+    subtype_dropdown = $("#subtype");
+    user_dropdown = $("#user");
+    // Update users on load, based on the subtype field
+    updateUsers();
+
+    // Function to call XHR and update user dropdown
+    function updateUsers() {
+      var send = {
+        subtype: subtype_dropdown.val()
+      };
+      user_dropdown.attr("disabled", "disabled");
+      user_dropdown.empty();
+      $.getJSON("{{ url_for('activities._get_users') }}", send, function(data) {
+        data.forEach(function(item) {
+          user_dropdown.append(
+            $("<option>", {
+              value: item[0],
+              text: item[1]
+            })
+          );
+        });
+        user_dropdown.removeAttr("disabled");
+      });
+    }
+
+    // Event listener to check for subtype dropdown changes
+    subtype_dropdown.change(function() {
+      console.log("Change");
+      updateUsers();
+    });
+  });
+</script>
 {% endblock %}

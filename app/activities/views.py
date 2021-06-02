@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, flash, abort, redirect, url_for
+from flask import Blueprint, render_template, flash, abort, redirect, url_for, request, jsonify
 from app.auth.views import login_required
 from app.models import db, ActivityRecord, User, UserSubtypeAssociation, UserSubtype, Activity, Event
 from app.activities.forms import NewUpdateActivityRecordForm
@@ -83,7 +83,7 @@ def new_activity():
 
     # Populate select fields
     form.subtype.choices = [(row.id, row.name) for row in UserSubtype.query.with_entities(UserSubtype.id, UserSubtype.name)]
-    form.user.choices = [(row.id, row.firstname + " " + row.lastname) for row in User.query.with_entities(User.id, User.firstname, User.lastname).filter(User.email1 != "admin@admin.it")]
+    form.user.choices = [(row.id, row.lastname + " " + row.firstname) for row in User.query.filter(User.email1 != "admin@admin.it").order_by(User.lastname)]
     form.event.choices = [(row.id, row.name) for row in Event.query.with_entities(Event.id, Event.name)]
     form.activity.choices = [(row.id, row.name) for row in Activity.query.with_entities(Activity.id, Activity.name)]
 
@@ -97,3 +97,9 @@ def new_activity():
         return redirect(url_for("activities.new_activity", action="new"))
 
     return render_template("activities/new_update_activity.html", form=form, action="new")
+
+@bp.route("/_get_users/")
+def _get_users():
+    subtype = request.args.get("subtype", "01", type=int)
+    users = [(row.id, row.lastname + " " + row.firstname) for row in User.query.join(UserSubtypeAssociation, UserSubtypeAssociation.user_id == User.id).filter(UserSubtypeAssociation.subtype_id == subtype).order_by(User.lastname)]
+    return jsonify(users)
