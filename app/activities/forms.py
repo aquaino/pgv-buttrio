@@ -5,7 +5,7 @@ from wtforms.validators import InputRequired, ValidationError
 from app.models import User
 
 class NewUpdateActivityRecordForm(FlaskForm):
-    subtype = SelectField("Gruppo vol.*", validators=[InputRequired()])
+    subtype = SelectField("Tipologia volontario*", validators=[InputRequired()])
     user = SelectField("Volontario*", validators=[InputRequired()])
     date = DateField("Data*", validators=[InputRequired()])
     event = SelectField("Evento*", validators=[InputRequired()])

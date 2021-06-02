@@ -78,6 +78,8 @@ class ActivityRecord(db.Model):
     date = db.Column(db.Date(), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     user = db.relationship('User', backref=db.backref('activity_records', lazy=True))
+    subtype_id = db.Column(db.Integer, db.ForeignKey('user_subtypes.id'), nullable=False)
+    subtype = db.relationship('UserSubtype', backref=db.backref('activity_records', lazy=True))
     event_id = db.Column(db.Integer, db.ForeignKey('events.id'), nullable=False)
     event = db.relationship('Event', backref=db.backref('activity_records', lazy=True))
     activity_id = db.Column(db.Integer, db.ForeignKey('activities.id'), nullable=False)

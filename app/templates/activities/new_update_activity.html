@@ -40,8 +40,11 @@
     // Get select fields
     subtype_dropdown = $("#subtype");
     user_dropdown = $("#user");
-    // Update users on load, based on the subtype field
-    updateUsers();
+
+    // Update users on load, based on the subtype field (except when updating)
+    {% if action == "new" %}
+      updateUsers();
+    {% endif %}
 
     // Function to call XHR and update user dropdown
     function updateUsers() {
@@ -51,15 +54,17 @@
       user_dropdown.attr("disabled", "disabled");
       user_dropdown.empty();
       $.getJSON("{{ url_for('activities._get_users') }}", send, function(data) {
-        data.forEach(function(item) {
-          user_dropdown.append(
-            $("<option>", {
-              value: item[0],
-              text: item[1]
-            })
-          );
-        });
-        user_dropdown.removeAttr("disabled");
+        if (data.length) {
+          data.forEach(function(item) {
+            user_dropdown.append(
+              $("<option>", {
+                value: item[0],
+                text: item[1]
+              })
+            );
+          });
+          user_dropdown.removeAttr("disabled");
+        }
       });
     }
 

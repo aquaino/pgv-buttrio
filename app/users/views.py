@@ -149,7 +149,7 @@ def update_user(user_id):
     # Get the subtype ids to populate multiselect field
     subtype_defaults = [row[0] for row in UserSubtypeAssociation.query.with_entities(UserSubtypeAssociation.subtype_id).filter_by(user_id=user_id)]
 
-    form = UpdateUserForm(validate_email1=False, subtype=subtype_defaults, firstname=user.firstname, lastname=user.lastname, gender=1, born_on=user.born_on, born_in=user.born_in, zip=user.zip, city=user.city, address=user.address, email1=user.email1, email2=user.email2, tel1=user.tel1, tel2=user.tel2, notes=user.notes)
+    form = UpdateUserForm(validate_email1=False, subtype=subtype_defaults, firstname=user.firstname, lastname=user.lastname, gender=user.gender, born_on=user.born_on, born_in=user.born_in, zip=user.zip, city=user.city, address=user.address, email1=user.email1, email2=user.email2, tel1=user.tel1, tel2=user.tel2, notes=user.notes)
 
     form.gender.choices = ["Non specificato", "Uomo", "Donna"]
     form.subtype.choices = subtype_choices
