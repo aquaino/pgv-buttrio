@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% set active_page = "reports.index" %}
+{% set page_title = "Reportistica" %}
+
+{% import "macros/table_macros.html" as table_macros with context %}
+
+{% block content %}
+<h2 class="py-2"><i class="bi bi-bar-chart-fill text-primary me-2"></i>{{ page_title }}</h2>
+<h4 class="border-start border-primary border-4 ps-2 mt-4">Tutti i report</h4>
+
+<div class="row mt-4">
+  <div class="col-md-6 col-lg-4">
+    <div class="card">
+      <div class="card-body">
+        <h5 class="card-title">Volontari totali</h5>
+        <p class="card-text">Totale univoco di volontari a sistema.</p>
+        <a href="#" class="btn btn-primary">Go somewhere</a>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-6 col-lg-4 mt-4 mt-md-0">
+    <div class="card">
+      <div class="card-body">
+        <h5 class="card-title">Volontari per gruppo</h5>
+        <p class="card-text">Totale volontari per ogni tipologia.</p>
+        <a href="#" class="btn btn-primary">Go somewhere</a>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-6 col-lg-4 mt-4 mt-lg-0">
+    <div class="card">
+      <div class="card-body">
+        <h5 class="card-title">Report 3</h5>
+        <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
+        <a href="#" class="btn btn-primary">Go somewhere</a>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

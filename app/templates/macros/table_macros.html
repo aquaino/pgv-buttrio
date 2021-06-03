@@ -57,7 +57,7 @@
             {% if user.born_on == None %}
               <td>{{ replace_if_none(user.born_on) }}</td>
             {% else %}
-              <td>{{ moment(user.born_on).format('L') }}</td>
+              <td>{{ user.born_on.strftime('%d/%m/%Y') }}</td>
             {% endif %}
             <td>{{ replace_if_none(user.born_in) }}</td>
             <td>{{ replace_if_none(user.zip) }}</td>
@@ -150,7 +150,7 @@
         <tbody>
           {% for activity in activities %}
           <tr>
-            <td>{{ moment(activity.date).format('L') }}</td>
+            <td>{{ activity.date.strftime('%d/%m/%Y') }}</td>
             {% with user = activity.lastname + " " + activity.firstname %}
               <td>{{ user }}</td>
             {% endwith %}

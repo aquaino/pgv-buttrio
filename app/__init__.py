@@ -24,11 +24,12 @@ def create_app(test_config=None):
     migrate = Migrate(app, db)
 
     # Apply the blueprints to the app
-    from app import auth, users, events, activities
+    from app import auth, users, events, activities, reports
     app.register_blueprint(auth.bp)
     app.register_blueprint(users.bp)
     app.register_blueprint(events.bp)
     app.register_blueprint(activities.bp)
+    app.register_blueprint(reports.bp)
 
     # Import CLI commands
     from app.commands import recreate_db_command, setup_db_command
