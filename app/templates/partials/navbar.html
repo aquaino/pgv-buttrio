@@ -6,7 +6,7 @@
           <img src="{{ url_for("static", filename="stemma-buttrio.jpg") }}" width="30" height="30" class="d-inline-block align-text-top">
           PGV Buttrio
         </a>
-        <span class="navbar-text">Portale Gestione Volontari</span>
+        <span class="navbar-text d-none d-sm-inline">Portale Gestione Volontari</span>
       </div>
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
@@ -26,7 +26,7 @@
         {% endfor %}
         </ul>
         {% if g.user %}
-          <a class="btn btn-sm btn-outline-light ms-sm-0 ms-md-2 my-sm-2 my-md-0" href="{{ url_for("auth.logout") }}">Logout</a>
+          <button type="button" class="btn btn-sm btn-outline-light ms-sm-0 ms-md-2 my-sm-2 my-md-0" onclick="window.location='{{ url_for('auth.logout') }}'">Logout</button>
         {% endif %}
       </div>
     </div>

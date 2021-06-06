@@ -6,7 +6,7 @@
 
 {% block content %}
 <div class="float-end">
-  <a type="button" href="{{ url_for('activities.new_activity') }}" class="btn btn-success"><i class="bi bi-plus-circle-fill me-2"></i>Aggiungi</a>
+  <button type="button" onclick="window.location='{{ url_for('activities.new_activity') }}'" class="btn btn-success"><i class="bi bi-plus-circle-fill me-2"></i>Aggiungi</button>
 </div>
 <h2 class="py-2"><i class="bi bi-file-earmark-spreadsheet-fill text-primary me-2"></i>{{ page_title }}</h2>
 {{ table_macros.render_activities_table("Tutte le attività", activities) }}

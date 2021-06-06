@@ -36,9 +36,15 @@
 {% macro render_item_buttons(update_url, duplicate_url, delete_url) %}
   <td class="text-center">
     <div class="btn-group">
-      <a class="me-1" href="{{ update_url }}" title="Modifica"><i class="bi bi-gear-fill text-primary"></i></a>
-      <a class="me-1" href="{{ duplicate_url }}" title="Duplica"><i class="bi bi-file-earmark-plus-fill text-primary"></i></a>
-      <a class="me-1" href="{{ delete_url }}" title="Elimina"><i class="bi bi-trash-fill text-primary"></i></a>
+      {% if update_url %}
+        <a class="me-1" href="{{ update_url }}" title="Modifica"><i class="bi bi-gear-fill text-primary"></i></a>
+      {% endif %}
+      {% if duplicate_url %}
+        <a class="me-1" href="{{ duplicate_url}}'" title="Duplica"><i class="bi bi-file-earmark-plus-fill text-primary"></i></a>
+      {% endif %}
+      {% if delete_url %}
+        <a class="me-1" href="{{ delete_url }}" title="Elimina"><i class="bi bi-trash-fill text-primary"></i></a>
+      {% endif %}
     </div>
   </td>
 {% endmacro %}
@@ -59,7 +65,9 @@
             {% for header in headers%}
               <th>{{ header }}</th>
             {% endfor %}
-            <th></th>
+            {% if not all_flag %}
+              <th></th>
+            {% endif %}
           </tr>
         </thead>
         <tbody>
@@ -81,9 +89,13 @@
             <td>{{ replace_if_none(user.email2) }}</td>
             <td>{{ replace_if_none(user.tel1) }}</td>
             <td>{{ replace_if_none(user.tel2) }}</td>
-            <td>{{ user.subtype_name }}</td>
+            {% if not all_flag %}
+              <td>{{ user.subtype_name }}</td>
+            {% endif %}
             <td>{{ replace_if_none(user.notes) }}</td>
-            {{ render_item_buttons(url_for('users.update_user', user_id=user.id), url_for('users.duplicate_user', user_id=user.id, subtype_id=user.subtype_id), url_for('users.delete_user', user_id=user.id, subtype_id=user.subtype_id)) }}
+            {% if not all_flag %}
+              {{ render_item_buttons(url_for('users.update_user', user_id=user.id), url_for('users.duplicate_user', user_id=user.id, subtype_id=user.subtype_id), url_for('users.delete_user', user_id=user.id, subtype_id=user.subtype_id)) }}
+            {% endif %}
           </tr>
           {% endfor %}
         </tbody>

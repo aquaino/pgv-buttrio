@@ -10,7 +10,7 @@
     {{ form_macros.render_field(form.subtype, "multiple-select") }}
     {{ form.submit(class="btn btn-success") }}
     <button id="select_all" class="btn btn-secondary" type="button" name="button">Seleziona tutto</button>
-    <a href="{{ url_for(active_page) }}" type="button" class="btn btn-danger">Annulla</a>
+    <button onclick="window.location='{{ url_for(active_page) }}'" type="button" class="btn btn-danger">Annulla</button>
   </form>
   <script>
   $(document).ready(function() {

@@ -8,6 +8,6 @@
     <input type="hidden" name="_method" value="DELETE">
     {{ form.csrf_token }}
     {{ form.submit(class="btn btn-success") }}
-    <a href="{{ url_for(active_page) }}" type="button" class="btn btn-danger">Annulla</a>
+    <button onclick="window.location='{{ url_for(active_page) }}'" type="button" class="btn btn-danger">Annulla</button>
   </form>
 {% endblock %}

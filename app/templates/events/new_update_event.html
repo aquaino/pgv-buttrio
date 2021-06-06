@@ -26,6 +26,6 @@
   {{ form_macros.render_field(form.descr, "text") }}
 
   {{ form.submit(class="btn btn-success") }}
-  <a href="{{ url_for('events.index') }}" type="button" class="btn btn-danger">Annulla</a>
+  <button onclick="window.location='{{ url_for('events.index') }}'" type="button" class="btn btn-danger">Annulla</button>
 </form>
 {% endblock %}

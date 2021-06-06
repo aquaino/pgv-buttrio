@@ -32,7 +32,7 @@
   {{ form_macros.render_field(form.notes, "text") }}
 
   {{ form.submit(class="btn btn-success") }}
-  <a href="{{ url_for('users.index') }}" type="button" class="btn btn-danger">Annulla</a>
+  <button onclick="window.location='{{ url_for('users.index') }}'" type="button" class="btn btn-danger">Annulla</button>
 </form>
 
 <script>
