@@ -192,12 +192,6 @@ def update_user(user_id):
 @login_required
 def all_users():
     """Show all users."""
-
-    users = User.query\
-        .with_entities(User.id, User.firstname, User.lastname, User.gender, User.born_on, User.born_in, User.zip, User.city, User.address, User.email1, User.email2, User.tel1, User.tel2, User.notes, UserSubtype.name.label("subtype_name"))\
-        .join(UserSubtypeAssociation, UserSubtypeAssociation.user_id == User.id)\
-        .join(UserSubtype, UserSubtype.id == UserSubtypeAssociation.subtype_id)\
-        .order_by(UserSubtype.name, User.lastname)\
-        .all()
+    users = User.query.all()
 
     return render_template("users/all_users.html", users=users)
