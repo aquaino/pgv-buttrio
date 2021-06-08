@@ -2,19 +2,12 @@ from flask import Flask
 from flask_migrate import Migrate
 from app.models import db
 from flask_moment import Moment
-import os
 
 def create_app(test_config=None):
     """Create and configure an instance of the Flask application."""
     # Create and configure the app (from .flaskenv file)
     app = Flask(__name__)
-    app.config.update (
-        FLASK_APP=os.environ.get("FLASK_APP"),
-        FLASK_ENV=os.environ.get("FLASK_ENV"),
-        SECRET_KEY=os.environ.get("SECRET_KEY"),
-        SQLALCHEMY_DATABASE_URI=os.environ.get("SQLALCHEMY_DATABASE_URI"),
-        SQLALCHEMY_TRACK_MODIFICATIONS=False
-    )
+    app.config.from_object("app.settings")
 
     # Initialize Moment extension for formatting dates and times
     moment = Moment(app)
