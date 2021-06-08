@@ -7,7 +7,7 @@ def create_app(test_config=None):
     """Create and configure an instance of the Flask application."""
     # Create and configure the app (from .flaskenv file)
     app = Flask(__name__)
-    app.config.from_object("app.settings")
+    app.config.from_pyfile("config.py")
 
     # Initialize Moment extension for formatting dates and times
     moment = Moment(app)

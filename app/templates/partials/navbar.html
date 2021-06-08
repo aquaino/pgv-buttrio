@@ -26,7 +26,7 @@
         {% endfor %}
         </ul>
         {% if g.user %}
-          <button type="button" class="btn btn-sm btn-outline-light ms-sm-0 ms-md-2 my-sm-2 my-md-0" onclick="window.location='{{ url_for('auth.logout') }}'">Logout</button>
+          <button type="button" class="btn btn-sm btn-outline-light ms-md-2 my-2 my-md-0" onclick="window.location='{{ url_for('auth.logout') }}'">Logout</button>
         {% endif %}
       </div>
     </div>
