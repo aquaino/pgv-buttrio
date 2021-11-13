@@ -1,33 +1,61 @@
-<header>
-  <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-primary">
-    <div class="container-fluid">
-      <div>
-        <a class="navbar-brand me-1" href="{{ url_for('index') }}">
-          <img src="{{ url_for("static", filename="stemma-buttrio.jpg") }}" width="30" height="30" class="d-inline-block align-text-top">
-          PGV Buttrio
-        </a>
-        <span class="navbar-text d-none d-sm-inline">Portale Gestione Volontari</span>
-      </div>
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <div class="collapse navbar-collapse justify-content-end" id="navbarCollapse">
-        {% set nav_menu = [
-          ("users.index", "Volontari"),
-          ("events.index", "Eventi"),
-          ("activities.index", "Attività"),
-          ("reports.index", "Report"),
-        ] -%}
-        <ul class="navbar-nav">
+<header
+  uk-sticky="sel-target: .uk-navbar-container; cls-active: uk-navbar-sticky"
+>
+  <nav
+    class="uk-navbar-container uk-padding-small uk-padding-remove-vertical"
+    uk-navbar
+  >
+    <a class="uk-navbar-item uk-logo" href="{{ url_for('index') }}">
+      <img src="{{ url_for("static", filename="stemma-buttrio.jpg") }}"
+      width="48" height="48" class="d-inline-block align-text-top">
+      PGV Buttrio
+      <span class="uk-text-small uk-visible@m" style="margin-top: 4px;">Portale Gestione Volontari</span>
+    </a>
+    <!-- Main menu -->
+    <div class="uk-navbar-right">
+      {% set nav_menu = [
+        ("users.index", "Volontari"),
+        ("events.index", "Eventi"),
+        ("activities.index", "Attività"),
+        ("reports.index", "Report"),
+      ] -%}
+      <ul class="uk-navbar-nav uk-visible@s">
         {% for name, text in nav_menu %}
-          <li class="nav-item">
-            <a {% if name == active_page %}class="nav-link active"{% else %}class="nav-link"{% endif %} href="{{ url_for(name) }}">{{ text }}</a>
+          <li {% if name == active_page %}class="uk-active"{% endif %}>
+            <a href="{{ url_for(name) }}">{{ text }}</a>
           </li>
         {% endfor %}
-        </ul>
         {% if g.user %}
-          <button type="button" class="btn btn-sm btn-outline-light ms-md-2 my-2 my-md-0" onclick="window.location='{{ url_for('auth.logout') }}'">Logout</button>
+        <li class="uk-navbar-item">
+          <button class="uk-button uk-button-danger uk-button-small" onclick="window.location='{{ url_for('auth.logout') }}'">Esci</button>
+        </li>
         {% endif %}
+      </ul>
+    </div>
+    <!-- Mobile menu -->
+    <div class="uk-hidden@s">
+      <button
+        class="uk-navbar-toggle"
+        uk-navbar-toggle-icon
+        type="button"
+        uk-toggle="target: #mobile-nav"
+      ></button>
+    </div>
+    <div id="mobile-nav" uk-offcanvas="overlay: true; flip: true">
+      <div class="uk-offcanvas-bar">
+        <ul class="uk-nav uk-nav-default">
+          {% for name, text in nav_menu %}
+            <li {% if name == active_page %}class="uk-active"{% endif %}>
+              <a href="{{ url_for(name) }}">{{ text }}</a>
+            </li>
+          {% endfor %}
+          {% if g.user %}
+          <hr class="uk-divider-small uk-margin-small">
+          <li>
+            <a class="uk-text-danger" onclick="window.location='{{ url_for('auth.logout') }}'">Esci</a>
+          </li>
+          {% endif %}
+        </ul>
       </div>
     </div>
   </nav>

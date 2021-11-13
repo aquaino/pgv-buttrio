@@ -25,9 +25,10 @@ def create_app(test_config=None):
     app.register_blueprint(reports.bp)
 
     # Import CLI commands
-    from app.commands import recreate_db_command, setup_db_command
+    from app.commands import recreate_db_command, setup_db_command, compile_scss_command
     app.cli.add_command(recreate_db_command)
     app.cli.add_command(setup_db_command)
+    app.cli.add_command(compile_scss_command)
 
     # Home = activity records
     app.add_url_rule('/', endpoint='index')

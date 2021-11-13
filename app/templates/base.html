@@ -1,17 +1,20 @@
-<!doctype html>
-<html lang="it" class="h-100">
+<!DOCTYPE html>
+<html lang="it">
 
   <!-- Head -->
   {% include "partials/head.html" %}
 
-  <body class="d-flex flex-column h-100">
+  <body>
 
     <!-- Fixed navbar -->
     {% include "partials/navbar.html" %}
 
     <!-- Page content -->
     <main>
-      <div class="container-fluid">
+      <div
+        class="uk-container uk-container-expand uk-margin-top uk-margin-large-bottom"
+        uk-height-viewport="expand: true;"
+      >
         {% for category, message in get_flashed_messages(with_categories=true) %}
           <div class="alert {% if category == 'error' %} alert-danger {% elif category == 'info' %} alert-success {% elif category == 'warning' %} alert-warning {% endif %} alert-dismissible fade show" role="alert">
             {{ message }}
@@ -21,6 +24,9 @@
 
         {% block content %}{% endblock %}
       </div>
+
+      <!-- To top -->
+      {% include "partials/totop.html" %}
     </main>
 
     <!-- Footer -->

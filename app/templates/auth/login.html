@@ -2,6 +2,36 @@
 {% set page_title = "Login" %}
 
 {% block content %}
+
+<div class="uk-card uk-card-small uk-card-default uk-position-center">
+  <div class="uk-card-body">
+    <h3 class="uk-card-title">Accesso</h3>
+    <form method="POST">
+      {{ form.csrf_token }}
+      <div class="uk-margin-small">
+        {{ form.email.label(class="uk-hidden") }}
+        <div class="uk-inline">
+          <span class="uk-form-icon" uk-icon="icon: user"></span>
+          {{ form.email(class="uk-input uk-form-small", placeholder="Email") }}
+        </div>
+      </div>
+      <div class="uk-margin-small">
+        {{ form.password.label(class="uk-hidden") }}
+        <div class="uk-inline">
+          <span class="uk-form-icon" uk-icon="icon: lock"></span>
+          {{ form.password(class="uk-input uk-form-small", placeholder="Password") }}
+        </div>
+      </div>
+      <div class="uk-margin-top">
+        {{ form.submit(class="uk-button uk-button-primary uk-button-small uk-margin-auto") }}
+      </div>
+    </form>
+  </div>
+</div>
+
+{% endblock %}
+
+{# {% block content %}
 <div class="row justify-content-center mt-sm-0 mt-sm-5">
   <div class="col-sm-6 col-md-4 col-lg-3">
     <div class="card">
@@ -25,4 +55,4 @@
     </div>
   </div>
 </div>
-{% endblock %}
+{% endblock %} #}

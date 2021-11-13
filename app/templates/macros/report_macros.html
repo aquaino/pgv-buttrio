@@ -1,11 +1,11 @@
 {% macro render_report_card(title, descr, value) %}
-  <div class="col-md-6 col-lg-4 mt-4">
-    <div class="card">
-      <div class="card-body">
-        <h4 class="card-title">{{ title }}</h4>
-        <h6 class="card-subtitle mb-2 text-muted">{{ descr }}</h6>
-        <p class="card-text text-primary display-6">{{ value }}</p>
-      </div>
+  <div class="uk-card uk-card-small uk-card-default">
+    <div class="uk-card-header">
+      <h3 class="uk-card-title uk-margin-remove">{{ title }}</h3>
+      <p class="uk-text-meta uk-margin-remove-top">{{ descr }}</p>
+    </div>
+    <div class="uk-card-body">
+      <p class="uk-text-primary uk-text-large">{{ value }}</p>
     </div>
   </div>
 {% endmacro %}

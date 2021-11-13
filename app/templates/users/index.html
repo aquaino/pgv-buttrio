@@ -5,20 +5,22 @@
 {% import "macros/table_macros.html" as table_macros with context %}
 
 {% block content %}
-<div class="row">
-  <div class="col-sm-6">
-    <h2 class="py-2"><i class="bi bi-people-fill text-primary me-2"></i>{{ page_title }}</h2>
-  </div>
-  <div class="col-sm-6">
-    <div class="float-sm-end">
-      <button type="button" onclick="window.location='{{ url_for('users.all_users') }}'" class="btn btn-secondary"><i class="bi bi-people-fill me-2"></i>Visualizza tutti</button>
-      <button type="button" onclick="window.location='{{ url_for('users.new_user') }}'" class="btn btn-success"><i class="bi bi-person-plus-fill me-2"></i>Aggiungi</button>
-    </div>
+<div class="uk-flex uk-flex-between uk-flex-top">
+  <h2><i class="bi bi-people-fill uk-text-primary"></i>&nbsp;{{ page_title }}</h2>
+  <div>
+    <button type="button" onclick="window.location='{{ url_for('users.all_users') }}'" class="uk-button uk-button-default uk-button-small"><i class="bi bi-people-fill uk-margin-small-right"></i>Visualizza tutti</button>
+    <button type="button" onclick="window.location='{{ url_for('users.new_user') }}'" class="uk-button uk-button-primary uk-button-small"><i class="bi bi-plus-circle-fill uk-margin-small-right"></i>Aggiungi</button>
   </div>
 </div>
 
 {{ table_macros.render_users_table("Protezione Civile", pc) }}
-{{ table_macros.render_users_table("Alpini", alpini) }}
-{{ table_macros.render_users_table("Volontari occasionali", occasionali) }}
-{{ table_macros.render_users_table("Esterni non assicurati", non_assicurati) }}
+<div class="uk-margin-top">
+  {{ table_macros.render_users_table("Alpini", alpini) }}
+</div>
+<div class="uk-margin-top">
+  {{ table_macros.render_users_table("Volontari occasionali", occasionali) }}
+</div>
+<div class="uk-margin-top">
+  {{ table_macros.render_users_table("Esterni non assicurati", non_assicurati) }}
+</div>
 {% endblock %}

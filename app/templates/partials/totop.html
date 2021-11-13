@@ -1,0 +1,30 @@
+<div
+  id="to-top"
+  class="uk-position-fixed uk-position-small uk-position-bottom-right uk-margin-medium-right uk-animation-slide-right-medium uk-hidden"
+>
+  <a
+    href="#"
+    class="uk-button uk-button-default uk-button-small"
+    style="padding: 0 5px;"
+    uk-totop
+    uk-scroll
+  ></a>
+</div>
+<script>
+  var toTop = document.getElementById("to-top");
+
+  window.onscroll = function() {
+    showToTop();
+  };
+
+  function showToTop() {
+    if (
+      document.body.scrollTop > 600 ||
+      document.documentElement.scrollTop > 600
+    ) {
+      toTop.classList.remove("uk-hidden");
+    } else {
+      toTop.classList.add("uk-hidden");
+    }
+  }
+</script>

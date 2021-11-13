@@ -4,6 +4,8 @@ from app.models import db, User, UserType, UserSubtype, UserSubtypeAssociation, 
 from werkzeug.security import generate_password_hash
 from flask.cli import with_appcontext
 from datetime import datetime
+import subprocess
+from flask import current_app
 
 @click.command("recreate-db")
 @with_appcontext
@@ -77,3 +79,10 @@ def setup_db_command():
 
     # Commit all
     db.session.commit()
+
+@click.command("compile-scss")
+@with_appcontext
+def compile_scss_command():
+    """Compile SCSS assets into CSS."""
+    subprocess.call(["sass", f"{current_app.root_path}/static/scss/main.scss:{current_app.root_path}/static/css/main.min.css", "--style", "compressed"])
+    print("SCSS assets compiled.")
