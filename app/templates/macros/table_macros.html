@@ -1,9 +1,10 @@
 {% macro table_scripts(table_id) %}
   <script>
     $(document).ready(function() {
+      // DataTable configuration
       var table = $("#{{ table_id }}").DataTable({
         // dom: "Blftrip",
-        dom: "<'uk-flex uk-flex-between'<B><f>>" + "<'uk-margin-top'l>" + "<'uk-margin-remove't>" + "<'uk-flex uk-flex-between'<ri><p>>",
+        dom: "<'uk-flex uk-flex-between uk-flex-wrap'<'uk-margin-small-bottom' B><'uk-margin-small-bottom' f><l>>" + "<'uk-margin-remove't>" + "<'uk-flex uk-flex-between uk-flex-wrap'<'uk-margin-small-bottom uk-text-muted' i><p>>",
         "pageLength": 25,
         "columnDefs": [
           { "targets": [$('#{{ table_id }} thead tr th').length - 1], "orderable": false }
@@ -58,7 +59,7 @@
         <a class="uk-margin-small-left" href="{{ update_url }}" title="Modifica"><i class="bi bi-gear-fill"></i></a>
       {% endif %}
       {% if duplicate_url %}
-        <a class="uk-margin-small-left" href="{{ duplicate_url}}'" title="Duplica"><i class="bi bi-file-earmark-plus-fill"></i></a>
+        <a class="uk-margin-small-left" href="{{ duplicate_url}}" title="Duplica"><i class="bi bi-file-earmark-plus-fill"></i></a>
       {% endif %}
       {% if delete_url %}
         <a class="uk-margin-small-left" href="{{ delete_url }}" title="Elimina"><i class="bi bi-trash-fill"></i></a>
@@ -69,8 +70,9 @@
 
 {% macro render_users_table(title, users, all_flag) %}
   <div class="uk-card uk-card-small uk-card-default">
-    <div class="uk-card-header">
-      <h3 class="uk-card-title">{{ title }}</h3>
+    <div class="uk-card-header uk-flex uk-flex-between uk-flex-middle">
+      <h3 class="uk-card-title uk-margin-remove">{{ title }}</h3>
+      <span class="uk-label uk-background-muted uk-text-muted">{{ users|length }} volontari</span>
     </div>
     <div class="uk-card-body">
       {% if not all_flag %}
@@ -80,7 +82,7 @@
       {% endif %}
       {% set table_id = title.replace(" ", "-").lower() + "-table" %}
       <div class="uk-overflow-auto">
-        <table id="{{ table_id }}" class="uk-table uk-table-small uk-table-striped">
+        <table id="{{ table_id }}" class="uk-table uk-table-small uk-table-striped uk-table-hover">
           <thead>
             <tr>
               {% for header in headers%}
@@ -136,14 +138,15 @@
 
 {% macro render_events_table(title, events) %}
   <div class="uk-card uk-card-small uk-card-default">
-    <div class="uk-card-header">
-      <h3 class="uk-card-title">{{ title }}</h3>
+    <div class="uk-card-header uk-flex uk-flex-between uk-flex-middle">
+      <h3 class="uk-card-title uk-margin-remove">{{ title }}</h3>
+      <span class="uk-label uk-background-muted uk-text-muted">{{ events|length }} eventi</span>
     </div>
     <div class="uk-card-body">
       {% set headers = ["Categoria Libro Verde", "Evento", "Descrizione"] %}
       {% set table_id = title.replace(" ", "-").lower() + "-table" %}
       <div class="uk-overflow-auto">
-        <table id="{{ table_id }}" class="uk-table uk-table-small uk-table-striped">
+        <table id="{{ table_id }}" class="uk-table uk-table-small uk-table-striped uk-table-hover">
           <thead>
             <tr>
               {% for header in headers%}
@@ -178,14 +181,15 @@
 
 {% macro render_activities_table(title, activities) %}
   <div class="uk-card uk-card-small uk-card-default">
-    <div class="uk-card-header">
-      <h3 class="uk-card-title">{{ title }}</h3>
+    <div class="uk-card-header uk-flex uk-flex-between uk-flex-middle">
+      <h3 class="uk-card-title uk-margin-remove">{{ title }}</h3>
+      <span class="uk-label uk-background-muted uk-text-muted">{{ activities|length }} attività</span>
     </div>
     <div class="uk-card-body">
       {% set headers = ["Data", "Volontario", "Tipologia vol.", "Evento", "Attività", "Inizio", "Fine", "Luogo", "Note"] %}
       {% set table_id = title.replace(" ", "-").lower() + "-table" %}
       <div class="uk-overflow-auto">
-        <table id="{{ table_id }}" class="uk-table uk-table-small uk-table-striped">
+        <table id="{{ table_id }}" class="uk-table uk-table-small uk-table-striped uk-table-hover">
           <thead>
             <tr>
               {% for header in headers%}

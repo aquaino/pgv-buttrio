@@ -3,13 +3,18 @@ from app.auth.views import login_required
 from app.models import db, User, UserSubtypeAssociation, UserSubtype, UserType
 from datetime import datetime
 from app.users.forms import NewUserForm, ConfirmUserDeletionForm, UpdateUserForm
+from app.forms import ConfirmActionForm
 from sqlalchemy.orm.session import make_transient
 import random
+from flask_menu import register_menu
+from flask_breadcrumbs import register_breadcrumb
 
 bp = Blueprint("users", __name__, url_prefix="/users")
 
 @bp.route("/")
 @login_required
+@register_menu(bp, '.users', 'Volontari')
+@register_breadcrumb(bp, '.', 'Volontari')
 def index():
     """Show all users, organized by type."""
 
@@ -36,6 +41,7 @@ def index():
 
 @bp.route("/new-user", methods=("GET", "POST"))
 @login_required
+@register_breadcrumb(bp, '.new-user', 'Nuovo volontario')
 def new_user():
     """Create a new user."""
     subtype_choices = [(row.id, row.name) for row in UserSubtype.query.with_entities(UserSubtype.id, UserSubtype.name)]
@@ -58,12 +64,17 @@ def new_user():
         db.session.commit()
 
         flash("Utente \"{} {}\" aggiunto.".format(user.firstname, user.lastname), "info")
-        return redirect(url_for("users.new_user", action="new"))
+        return redirect(url_for("users.index"))
 
     return render_template("users/new_update_user.html", form=form, action="new")
 
+def user_eac(*args, **kwargs):
+    user_id = request.view_args['user_id']
+    return {'user_id': user_id}
+
 @bp.route('/<int:user_id>/delete', methods=("GET", "POST"))
 @login_required
+@register_breadcrumb(bp, '.delete-user', 'Elimina volontario')
 def delete_user(user_id):
     """Confirm the deletion of a user."""
     user = User.query.filter_by(id=user_id).first()
@@ -101,41 +112,49 @@ def delete_user(user_id):
 
         return redirect(url_for("users.index"))
 
-    return render_template("users/confirm_user_deletion.html", form=form, active_page="users.index", page_title="Eliminazione volontario", item_name=fullname)
+    return render_template("users/confirm_user_deletion.html", form=form, page_title="Eliminazione volontario", item_name=fullname)
 
-@bp.route('/<int:user_id>/duplicate')
+@bp.route('/<int:user_id>/duplicate', methods=("GET", "POST"))
+@register_breadcrumb(bp, '.duplicate-user', 'Duplica volontario', endpoint_arguments_constructor=user_eac)
 @login_required
 def duplicate_user(user_id):
-    """Duplicate a user."""
+    """Confirm and duplicate a user."""
+
     user = User.query.filter_by(id=user_id).first()
     if user is None:
         abort(404)
 
-    # Colne only the current subtype association
-    assoc = UserSubtypeAssociation.query.filter_by(user_id=user_id, subtype_id=int(request.args.get("subtype_id"))).first()
-    old_email = user.email1
-
-    # Clone the user with a new id and also his subtype association
-    db.session.expunge(user)
-    db.session.expunge(assoc)
-    make_transient(user)
-    make_transient(assoc)
-    user.id = None
-    user.email1 = "{}-{}".format(old_email, str(random.randint(0, 999)))
-    assoc.id = None
-    db.session.add(user)
-    db.session.commit()
-
-    assoc.user_id = user.id
-    db.session.add(assoc)
-    db.session.commit()
+    form = ConfirmActionForm()
 
     fullname = "{} {}".format(user.firstname, user.lastname)
-    flash("Utente \"{}\" duplicato.".format(fullname), "info")
+    if form.validate_on_submit():
+        # Clone only the current subtype association
+        assoc = UserSubtypeAssociation.query.filter_by(user_id=user_id, subtype_id=int(request.args.get("subtype_id"))).first()
+        old_email = user.email1
 
-    return redirect(url_for("users.index"))
+        # Clone the user with a new id and also his subtype association
+        db.session.expunge(user)
+        db.session.expunge(assoc)
+        make_transient(user)
+        make_transient(assoc)
+        user.id = None
+        user.email1 = "{}-{}".format(old_email, str(random.randint(0, 999)))
+        assoc.id = None
+        db.session.add(user)
+        db.session.commit()
+
+        assoc.user_id = user.id
+        db.session.add(assoc)
+        db.session.commit()
+
+        flash("Utente \"{}\" duplicato.".format(fullname), "info")
+
+        return redirect(url_for("users.index"))
+
+    return render_template("confirm_update.html", form=form, page_title="Duplicazione utente", item_name=fullname)
 
 @bp.route("/<int:user_id>/update", methods=("GET", "POST"))
+@register_breadcrumb(bp, '.update-user', 'Modifica volontario', endpoint_arguments_constructor=user_eac)
 @login_required
 def update_user(user_id):
     """Update existing user informations."""
@@ -189,6 +208,7 @@ def update_user(user_id):
     return render_template("users/new_update_user.html", form=form, action="update")
 
 @bp.route("/all")
+@register_breadcrumb(bp, '.all', 'Tutti')
 @login_required
 def all_users():
     """Show all users."""

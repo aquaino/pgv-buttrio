@@ -5,9 +5,9 @@
 
   <form method="POST" class="uk-margin">
     <fieldset class="uk-fieldset">
-      <legend class="uk-legend">Conferma eliminazione</legend>
-      <p class="uk-margin-small">Vuoi davvero eliminare "{{ item_name }}"?</p>
-      <input type="hidden" name="_method" value="DELETE">
+      <legend class="uk-legend">Conferma duplicazione</legend>
+      <p class="uk-margin-small">Vuoi davvero duplicare "{{ item_name }}"?</p>
+      <input type="hidden" name="_method" value="UPDATE">
       {{ form.csrf_token }}
 
       <div class="uk-margin">

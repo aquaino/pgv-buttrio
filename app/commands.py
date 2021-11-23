@@ -80,9 +80,8 @@ def setup_db_command():
     # Commit all
     db.session.commit()
 
-@click.command("compile-scss")
+@click.command("compile-scss-watch")
 @with_appcontext
-def compile_scss_command():
-    """Compile SCSS assets into CSS."""
-    subprocess.call(["sass", f"{current_app.root_path}/static/scss/main.scss:{current_app.root_path}/static/css/main.min.css", "--style", "compressed"])
-    print("SCSS assets compiled.")
+def compile_scss_watch_command():
+    """Watch to compile SCSS assets into CSS (Ctrl+C to stop)."""
+    subprocess.call(["sass", "--watch", f"{current_app.root_path}/static/scss/main.scss:{current_app.root_path}/static/css/main.min.css", "--style", "compressed"])

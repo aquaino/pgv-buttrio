@@ -1,6 +1,8 @@
 // 1. Your custom variables and variable overwrites.
 @import "my-theme/variables.scss";
 @import "my-theme/navbar.scss";
+@import "my-theme/offcanvas.scss";
+@import "my-theme/breadcrumb.scss";
 
 // 2. Import default variables and available mixins.
 @import "variables-theme.scss";

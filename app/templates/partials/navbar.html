@@ -8,23 +8,17 @@
     <a class="uk-navbar-item uk-logo" href="{{ url_for('index') }}">
       <img src="{{ url_for("static", filename="stemma-buttrio.jpg") }}"
       width="48" height="48" class="d-inline-block align-text-top">
-      PGV Buttrio
+      <span class="uk-text-primary">PGV Buttrio</span>
       <span class="uk-text-small uk-visible@m" style="margin-top: 4px;">Portale Gestione Volontari</span>
     </a>
     <!-- Main menu -->
     <div class="uk-navbar-right">
-      {% set nav_menu = [
-        ("users.index", "Volontari"),
-        ("events.index", "Eventi"),
-        ("activities.index", "Attività"),
-        ("reports.index", "Report"),
-      ] -%}
       <ul class="uk-navbar-nav uk-visible@s">
-        {% for name, text in nav_menu %}
-          <li {% if name == active_page %}class="uk-active"{% endif %}>
-            <a href="{{ url_for(name) }}">{{ text }}</a>
-          </li>
-        {% endfor %}
+        {%- for item in current_menu.children -%}
+        <li {% if item.active %}class="uk-active"{% endif %}>
+          <a href="{{ item.url}}">{{ item.text }}</a>
+        </li>
+        {%- endfor -%}
         {% if g.user %}
         <li class="uk-navbar-item">
           <button class="uk-button uk-button-danger uk-button-small" onclick="window.location='{{ url_for('auth.logout') }}'">Esci</button>
@@ -43,16 +37,16 @@
     </div>
     <div id="mobile-nav" uk-offcanvas="overlay: true; flip: true">
       <div class="uk-offcanvas-bar">
-        <ul class="uk-nav uk-nav-default">
-          {% for name, text in nav_menu %}
-            <li {% if name == active_page %}class="uk-active"{% endif %}>
-              <a href="{{ url_for(name) }}">{{ text }}</a>
+        <ul class="uk-nav uk-nav-default uk-text-uppercase">
+          {%- for item in current_menu.children -%}
+            <li {% if item.active %}class="uk-active"{% endif %}>
+              <a href="{{ item.url }}">{{ item.text }}</a>
             </li>
           {% endfor %}
           {% if g.user %}
           <hr class="uk-divider-small uk-margin-small">
           <li>
-            <a class="uk-text-danger" onclick="window.location='{{ url_for('auth.logout') }}'">Esci</a>
+            <a onclick="window.location='{{ url_for('auth.logout') }}'">Esci</a>
           </li>
           {% endif %}
         </ul>

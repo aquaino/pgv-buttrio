@@ -5,11 +5,15 @@ from app.activities.forms import NewUpdateActivityRecordForm
 from app.forms import ConfirmActionForm
 from sqlalchemy.orm.session import make_transient
 from sqlalchemy import desc
+from flask_menu import register_menu
+from flask_breadcrumbs import register_breadcrumb
 
-bp = Blueprint("activities", __name__)
+bp = Blueprint("activities", __name__, url_prefix="/activities")
 
 @bp.route("/")
 @login_required
+@register_menu(bp, '.activities', 'Attività')
+@register_breadcrumb(bp, '.', 'Attività')
 def index():
     """Show recent activities."""
     activities = ActivityRecord.query\
@@ -23,7 +27,12 @@ def index():
 
     return render_template("activities/index.html", activities=activities)
 
+def activity_eac(*args, **kwargs):
+    activity_id = request.view_args['activity_id']
+    return {'activity_id': activity_id}
+
 @bp.route('/<int:activity_id>/delete', methods=("GET", "POST"))
+@register_breadcrumb(bp, '.delete', 'Elimina attività', endpoint_arguments_constructor=activity_eac)
 @login_required
 def delete_activity(activity_id):
     """Confirm the deletion of an activity record."""
@@ -33,7 +42,7 @@ def delete_activity(activity_id):
 
     # Get activity record useful info
     user = User.query.filter_by(id=activity.user_id).first()
-    event = Event.query.filter_by(id=activity.event_id).first()
+    event = Event.query.filter_by(id=activity.activity_id).first()
     activity_type = Activity.query.filter_by(id=activity.activity_id).first()
 
     activity_record_name = "{} - {} {} - {} - {}".format(activity.date, user.firstname, user.lastname, event.name, activity_type.name)
@@ -46,22 +55,18 @@ def delete_activity(activity_id):
         flash("Record attività \"{}\" eliminato.".format(activity_record_name), "info")
         return redirect(url_for("activities.index"))
 
-    return render_template("confirm_deletion.html", form=form, active_page="activities.index", page_title="Eliminazione record attività", item_name=activity_record_name)
+    return render_template("confirm_deletion.html", form=form, page_title="Eliminazione record attività", item_name=activity_record_name)
 
-@bp.route('/<int:activity_id>/duplicate')
+@bp.route('/<int:activity_id>/duplicate', methods=('GET', 'POST'))
+@register_breadcrumb(bp, '.duplicate-activity', 'Duplica attività', endpoint_arguments_constructor=activity_eac)
 @login_required
 def duplicate_activity(activity_id):
-    """Duplicate an activity record."""
+    """Confirm and duplicate an activity record."""
     activity = ActivityRecord.query.filter_by(id=activity_id).first()
     if activity is None:
         abort(404)
 
-    # Clone the activity with a new id
-    db.session.expunge(activity)
-    make_transient(activity)
-    activity.id = None
-    db.session.add(activity)
-    db.session.commit()
+    form = ConfirmActionForm()
 
     # Get activity record useful info
     user = User.query.filter_by(id=activity.user_id).first()
@@ -69,12 +74,23 @@ def duplicate_activity(activity_id):
     activity_type = Activity.query.filter_by(id=activity.activity_id).first()
 
     activity_record_name = "{} - {} {} - {} - {}".format(activity.date, user.firstname, user.lastname, event.name, activity_type.name)
+    
+    if form.validate_on_submit():
+        # Clone the activity with a new id
+        db.session.expunge(activity)
+        make_transient(activity)
+        activity.id = None
+        db.session.add(activity)
+        db.session.commit()
 
-    flash("Record attività \"{}\" duplicato.".format(activity_record_name), "info")
+        flash("Record attività \"{}\" duplicato.".format(activity_record_name), "info")
 
-    return redirect(url_for("activities.index"))
+        return redirect(url_for("activities.index"))
+
+    return render_template("confirm_update.html", form=form, page_title="Duplicazione attività", item_name=event.name)
 
 @bp.route("/new-activity", methods=("GET", "POST"))
+@register_breadcrumb(bp, '.new-activity', 'Nuova attività')
 @login_required
 def new_activity():
     """Create a new activity record."""
@@ -93,7 +109,7 @@ def new_activity():
         db.session.commit()
 
         flash("Record attività aggiunto.", "info")
-        return redirect(url_for("activities.new_activity", action="new"))
+        return redirect(url_for("activities.index"))
 
     return render_template("activities/new_update_activity.html", form=form, action="new")
 
@@ -104,6 +120,7 @@ def _get_users():
     return jsonify(users)
 
 @bp.route("/<int:activity_id>/update", methods=("GET", "POST"))
+@register_breadcrumb(bp, '.update-activity', 'Modifica attività', endpoint_arguments_constructor=activity_eac)
 @login_required
 def update_activity(activity_id):
     """Update existing activity record informations."""

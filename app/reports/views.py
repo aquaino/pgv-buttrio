@@ -4,11 +4,15 @@ from app.models import db, User, ActivityRecord, UserSubtypeAssociation, UserSub
 from sqlalchemy import create_engine
 from flask import current_app
 from sqlalchemy import func, desc
+from flask_menu import register_menu
+from flask_breadcrumbs import register_breadcrumb
 
 bp = Blueprint("reports", __name__, url_prefix="/reports")
 
 @bp.route("/")
 @login_required
+@register_menu(bp, '.reports', 'Report')
+@register_breadcrumb(bp, '.', 'Report')
 def index():
     """Show all the reports."""
     # For raw SQL queries
