@@ -1,0 +1,8 @@
+// Open Sans font
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans:ital,wght@0,400;0,700;1,400;1,700&display=swap');
+
+// Variables
+$global-font-family:             "Open Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+$global-primary-background:       #ff7c1a;
+$global-link-color:               $global-primary-background;
+$global-link-hover-color:         lighten($global-primary-background, 10%);

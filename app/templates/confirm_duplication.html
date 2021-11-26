@@ -1,0 +1,23 @@
+{% extends "base.html" %} {% block content %}
+<h2 class="uk-margin-remove">
+  <span uk-icon="icon: copy; ratio: 2" class="uk-text-primary"></span>&nbsp;{{
+  page_title }}
+</h2>
+
+<form method="POST" class="uk-form-stacked uk-margin">
+  <p class="uk-margin-small">Vuoi davvero duplicare "{{ item_name }}"?</p>
+  <input type="hidden" name="_method" value="UPDATE" />
+  {{ form.csrf_token }}
+
+  <div class="uk-margin">
+    {{ form.submit(class="uk-button uk-button-primary uk-button-small") }}
+    <button
+      onclick="window.location='{{ request.referrer }}'"
+      type="button"
+      class="uk-button uk-button-danger uk-button-small"
+    >
+      Annulla
+    </button>
+  </div>
+</form>
+{% endblock %}

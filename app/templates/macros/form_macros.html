@@ -1,5 +1,5 @@
 {% macro render_field_errors(field) %}
-  <div class="form-text text-danger">
+  <div class="uk-text-small uk-text-danger">
     {% for error in field.errors %}
       {{ error }}
     {% endfor %}
@@ -8,64 +8,88 @@
 
 {% macro render_field(field, field_type) %}
   {% if field_type == "simple" %}
-    <div class="row mb-3">
-      {{ field.label(class="col-md-4 col-lg-2 col-form-label") }}
-      <div class="col-md-8 col-lg-4">
-        {{ field(class="form-control") }}
-        {% if field.description %}
-          <div class="form-text">
-            {{ field.description }}
-          </div>
-        {% endif %}
-        {% if field.errors %}
-          {{ render_field_errors(field) }}
-        {% endif %}
-      </div>
+
+    <div class="uk-margin-small">
+        {{ field.label(class="uk-form-label") }}
+        <div class="uk-form-controls">
+            {% if not field.errors %}
+              {{ field(class="uk-input uk-form-small") }}
+            {% else %}
+              {{ field(class="uk-input uk-form-small uk-form-danger") }}
+            {% endif %}
+            {% if field.description %}
+              <div class="uk-text-small uk-text-muted">
+                {{ field.description }}
+              </div>
+            {% endif %}
+            {% if field.errors %}
+              {{ render_field_errors(field) }}
+            {% endif %}
+        </div>
     </div>
+
   {% elif field_type == "select" %}
-    <div class="row mb-3">
-      {{ field.label(class="col-md-4 col-lg-2 col-form-label") }}
-      <div class="col-md-8 col-lg-4">
-        {{ field(class="form-select") }}
-        {% if field.description %}
-          <div class="form-text">
-            {{ field.description }}
-          </div>
-        {% endif %}
-        {% if field.errors %}
-          {{ render_field_errors(field) }}
-        {% endif %}
-      </div>
+
+    <div class="uk-margin-small">
+        {{ field.label(class="uk-form-label") }}
+        <div class="uk-form-controls">
+          {% if not field.errors %}
+            {{ field(class="uk-select uk-form-small") }}
+          {% else %}
+            {{ field(class="uk-select uk-form-small uk-form-danger") }}
+          {% endif %}
+            {% if field.description %}
+              <div class="uk-text-small uk-text-muted">
+                {{ field.description }}
+              </div>
+            {% endif %}
+            {% if field.errors %}
+              {{ render_field_errors(field) }}
+            {% endif %}
+        </div>
     </div>
+
   {% elif field_type == "multiple-select" %}
-    <div class="row mb-3">
-      {{ field.label(class="col-md-4 col-lg-2 col-form-label") }}
-      <div class="col-md-8 col-lg-4">
-        {{ field(class="form-select", size=field.choices|length) }}
-        {% if field.description %}
-          <div class="form-text">
-            {{ field.description }}
-          </div>
-        {% endif %}
-        {% if field.errors %}
-          {{ render_field_errors(field) }}
-        {% endif %}
-      </div>
+
+    <div class="uk-margin-small">
+        {{ field.label(class="uk-form-label") }}
+        <div class="uk-form-controls">
+            {% if not field.errors %}
+              {{ field(class="uk-select uk-form-small", size=field.choices|length) }}
+            {% else %}
+              {{ field(class="uk-select uk-form-small uk-form-danger", size=field.choices|length) }}
+            {% endif %}
+            {% if field.description %}
+              <div class="uk-text-small uk-text-muted">
+                {{ field.description }}
+              </div>
+            {% endif %}
+            {% if field.errors %}
+              {{ render_field_errors(field) }}
+            {% endif %}
+        </div>
     </div>
+
   {% elif field_type == "text" %}
-    <div class="row mb-3">
-      {{ field.label(class="col-md-4 col-lg-2 col-form-label") }}
-      <div class="col-md-8 col-lg-4">
-        {{ field(class="form-control") }}
-        {% if field.description %}
-          <div class="form-text">
-            {{ field.description }}
-          </div>
-        {% endif %}
-        {% if field.errors %}
-          {{ render_field_errors(field) }}
-        {% endif %}
-      </div>
+
+    <div class="uk-margin-small">
+        {{ field.label(class="uk-form-label") }}
+        <div class="uk-form-controls">
+            {% if not field.errors %}
+              {{ field(class="uk-textarea uk-form-small") }}
+            {% else %}
+              {{ field(class="uk-textarea uk-form-small uk-form-danger") }}
+            {% endif %}
+            {% if field.description %}
+              <div class="uk-text-small uk-text-muted">
+                {{ field.description }}
+              </div>
+            {% endif %}
+            {% if field.errors %}
+              {{ render_field_errors(field) }}
+            {% endif %}
+        </div>
     </div>
+
   {% endif %}
 {% endmacro %}

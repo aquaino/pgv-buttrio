@@ -1,26 +1,39 @@
-<!doctype html>
-<html lang="it" class="h-100">
+<!DOCTYPE html>
+<html lang="it">
 
   <!-- Head -->
   {% include "partials/head.html" %}
 
-  <body class="d-flex flex-column h-100">
+  <body>
 
     <!-- Fixed navbar -->
     {% include "partials/navbar.html" %}
 
     <!-- Page content -->
     <main>
-      <div class="container-fluid">
+      <div
+        class="uk-container uk-container-expand uk-margin-top uk-margin-large-bottom"
+        uk-height-viewport="expand: true;"
+      >
         {% for category, message in get_flashed_messages(with_categories=true) %}
-          <div class="alert {% if category == 'error' %} alert-danger {% elif category == 'info' %} alert-success {% elif category == 'warning' %} alert-warning {% endif %} alert-dismissible fade show" role="alert">
+          <div class="{% if category == 'error' %} uk-alert-danger {% elif category == 'info' %} uk-alert-success {% elif category == 'warning' %} uk-alert-warning {% endif %} alert-dismissible fade show" uk-alert>
+            <a class="uk-alert-close" uk-close></a>
             {{ message }}
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
           </div>
         {% endfor %}
 
+        <!-- Breadcrumbs -->
+        <ul class="uk-breadcrumb uk-background-muted uk-display-inline-block" style="padding: .25rem .66rem;">
+          {%- for breadcrumb in breadcrumbs -%}
+            <li><a href="{{ breadcrumb.url }}">{{ breadcrumb.text }}</a></li>
+          {%- endfor -%}
+        </ul>
+
         {% block content %}{% endblock %}
       </div>
+
+      <!-- To top -->
+      {% include "partials/totop.html" %}
     </main>
 
     <!-- Footer -->

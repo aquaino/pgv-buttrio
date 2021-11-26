@@ -1,13 +1,23 @@
-{% extends "base.html" %}
+{% extends "base.html" %} {% block content %}
+<h2 class="uk-margin-remove">
+  <span uk-icon="icon: trash; ratio: 2" class="uk-text-primary"></span>&nbsp;{{
+  page_title }}
+</h2>
 
-{% block content %}
-  <h2 class="py-2"><i class="bi bi-trash-fill text-primary me-2"></i>{{ page_title }}</h2>
-  <h4 class="border-start border-primary border-4 ps-2 mt-3">Conferma eliminazione</h4>
-  Vuoi davvero eliminare "{{ item_name }}"?
-  <form method="POST" class="mt-3">
-    <input type="hidden" name="_method" value="DELETE">
-    {{ form.csrf_token }}
-    {{ form.submit(class="btn btn-success") }}
-    <button onclick="window.location='{{ url_for(active_page) }}'" type="button" class="btn btn-danger">Annulla</button>
-  </form>
+<form method="POST" class="uk-form-stacked uk-margin">
+  <p class="uk-margin-small">Vuoi davvero eliminare "{{ item_name }}"?</p>
+  <input type="hidden" name="_method" value="DELETE" />
+  {{ form.csrf_token }}
+
+  <div class="uk-margin">
+    {{ form.submit(class="uk-button uk-button-primary uk-button-small") }}
+    <button
+      onclick="window.location='{{ request.referrer }}'"
+      type="button"
+      class="uk-button uk-button-danger uk-button-small"
+    >
+      Annulla
+    </button>
+  </div>
+</form>
 {% endblock %}
