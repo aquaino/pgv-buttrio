@@ -1,6 +1,8 @@
 alembic==1.6.5
 click==8.0.1
 Flask==2.0.1
+Flask-Breadcrumbs==0.5.1
+Flask-Menu==0.7.2
 Flask-Migrate==3.0.1
 Flask-Moment==0.11.0
 Flask-SQLAlchemy==2.5.1
@@ -11,6 +13,8 @@ itsdangerous==2.0.1
 Jinja2==3.0.1
 Mako==1.1.4
 MarkupSafe==2.0.1
+pip-autoremove==0.10.0
+psycopg2-binary==2.9.1
 python-dateutil==2.8.1
 python-dotenv==0.17.1
 python-editor==1.0.4
@@ -18,4 +22,3 @@ six==1.16.0
 SQLAlchemy==1.4.17
 Werkzeug==2.0.1
 WTForms==2.3.3
-psycopg2-binary==2.9.1
