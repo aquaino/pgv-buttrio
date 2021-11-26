@@ -13,9 +13,9 @@
         {{ field.label(class="uk-form-label") }}
         <div class="uk-form-controls">
             {% if not field.errors %}
-              {{ field(class="uk-input uk-form-small uk-form-width-large") }}
+              {{ field(class="uk-input uk-form-small") }}
             {% else %}
-              {{ field(class="uk-input uk-form-small uk-form-width-large uk-form-danger") }}
+              {{ field(class="uk-input uk-form-small uk-form-danger") }}
             {% endif %}
             {% if field.description %}
               <div class="uk-text-small uk-text-muted">
@@ -34,9 +34,9 @@
         {{ field.label(class="uk-form-label") }}
         <div class="uk-form-controls">
           {% if not field.errors %}
-            {{ field(class="uk-select uk-form-small uk-form-width-large") }}
+            {{ field(class="uk-select uk-form-small") }}
           {% else %}
-            {{ field(class="uk-select uk-form-small uk-form-width-large uk-form-danger") }}
+            {{ field(class="uk-select uk-form-small uk-form-danger") }}
           {% endif %}
             {% if field.description %}
               <div class="uk-text-small uk-text-muted">
@@ -55,9 +55,9 @@
         {{ field.label(class="uk-form-label") }}
         <div class="uk-form-controls">
             {% if not field.errors %}
-              {{ field(class="uk-select uk-form-small uk-form-width-large", size=field.choices|length) }}
+              {{ field(class="uk-select uk-form-small", size=field.choices|length) }}
             {% else %}
-              {{ field(class="uk-select uk-form-small uk-form-width-large uk-form-danger", size=field.choices|length) }}
+              {{ field(class="uk-select uk-form-small uk-form-danger", size=field.choices|length) }}
             {% endif %}
             {% if field.description %}
               <div class="uk-text-small uk-text-muted">
@@ -76,9 +76,9 @@
         {{ field.label(class="uk-form-label") }}
         <div class="uk-form-controls">
             {% if not field.errors %}
-              {{ field(class="uk-textarea uk-form-small uk-form-width-large") }}
+              {{ field(class="uk-textarea uk-form-small") }}
             {% else %}
-              {{ field(class="uk-textarea uk-form-small uk-form-width-large uk-form-danger") }}
+              {{ field(class="uk-textarea uk-form-small uk-form-danger") }}
             {% endif %}
             {% if field.description %}
               <div class="uk-text-small uk-text-muted">

@@ -54,18 +54,24 @@
 
 {% macro render_item_buttons(update_url, duplicate_url, delete_url) %}
   <td class="uk-text-center">
-    <div class="uk-button-group">
+    <div class="item-buttons uk-flex-inline">
       {% if update_url %}
-        <a class="uk-margin-small-left" href="{{ update_url }}" title="Modifica"><i class="bi bi-gear-fill"></i></a>
+        <a href="{{ update_url }}" title="Modifica" class="uk-icon-link uk-text-primary uk-margin-small-left" uk-icon="cog"></a>
       {% endif %}
       {% if duplicate_url %}
-        <a class="uk-margin-small-left" href="{{ duplicate_url}}" title="Duplica"><i class="bi bi-file-earmark-plus-fill"></i></a>
+        <a href="{{ duplicate_url}}" title="Duplica" class="uk-icon-link uk-text-primary uk-margin-small-left" uk-icon="copy"></a>
       {% endif %}
       {% if delete_url %}
-        <a class="uk-margin-small-left" href="{{ delete_url }}" title="Elimina"><i class="bi bi-trash-fill"></i></a>
+        <a href="{{ delete_url }}" title="Elimina" class="uk-icon-link uk-text-primary uk-margin-small-left" uk-icon="trash"></a>
       {% endif %}
     </div>
   </td>
+
+  <style>
+    .item-buttons svg {
+      min-width: max-content;
+    }
+  </style>
 {% endmacro %}
 
 {% macro render_users_table(title, users, all_flag) %}

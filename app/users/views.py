@@ -151,7 +151,7 @@ def duplicate_user(user_id):
 
         return redirect(url_for("users.index"))
 
-    return render_template("confirm_update.html", form=form, page_title="Duplicazione utente", item_name=fullname)
+    return render_template("confirm_duplication.html", form=form, page_title="Duplicazione utente", item_name=fullname)
 
 @bp.route("/<int:user_id>/update", methods=("GET", "POST"))
 @register_breadcrumb(bp, '.update-user', 'Modifica volontario', endpoint_arguments_constructor=user_eac)

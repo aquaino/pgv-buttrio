@@ -115,4 +115,4 @@ def duplicate_event(event_id):
 
         return redirect(url_for("events.index"))
 
-    return render_template("confirm_update.html", form=form, page_title="Duplicazione evento", item_name=event.name)
+    return render_template("confirm_duplication.html", form=form, page_title="Duplicazione evento", item_name=event.name)

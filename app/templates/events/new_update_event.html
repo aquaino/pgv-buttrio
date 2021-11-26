@@ -1,34 +1,38 @@
-{% extends "base.html" %}
-
-{% import "macros/form_macros.html" as form_macros %}
-
-{% if action == "new" %}
-  {% set page_title = "Nuovo evento" %}
-  {% set page_icon = "bi-calendar-plus-fill" %}
-{% elif action == "update" %}
-  {% set page_title = "Modifica evento" %}
-  {% set page_icon = "bi-gear-fill" %}
-  {% set hidden_method = "PATCH" %}
-{% endif %}
-
-{% block content %}
-<h2 class="uk-margin-remove"><i class="bi {{ page_icon }} uk-text-primary"></i>&nbsp;{{ page_title }}</h2>
-<form method="POST" class="uk-margin">
-  <fieldset class="uk-fieldset">
-    <legend class="uk-legend">Dati dell'evento</legend>
+{% extends "base.html" %} {% import "macros/form_macros.html" as form_macros %}
+{% if action == "new" %} {% set page_title = "Nuovo evento" %} {% set page_icon
+= "plus" %} {% elif action == "update" %} {% set page_title = "Modifica evento"
+%} {% set page_icon = "cog" %} {% set hidden_method = "PATCH" %} {% endif %} {%
+block content %}
+<h2 class="uk-margin-remove">
+  <span uk-icon="icon: {{ page_icon }}; ratio: 2" class="uk-text-primary"></span
+  >&nbsp;{{ page_title }}
+</h2>
+<div class="uk-container-small uk-margin-top">
+  <form method="POST" class="uk-form-stacked uk-grid-small" uk-grid>
     {% if action == "update" %}
-      <input type="hidden" name="_method" value="{{ hidden_method }}">
-    {% endif %}
-    {{ form.csrf_token }}
+    <input type="hidden" name="_method" value="{{ hidden_method }}" />
+    {% endif %} {{ form.csrf_token }}
 
-    {{ form_macros.render_field(form.gb_category, "select") }}
-    {{ form_macros.render_field(form.name, "simple") }}
-    {{ form_macros.render_field(form.descr, "text") }}
+    <div class="uk-width-1-2@s">
+      {{ form_macros.render_field(form.gb_category, "select") }}
+    </div>
+    <div class="uk-width-1-2@s">
+      {{ form_macros.render_field(form.name, "simple") }}
+    </div>
+    <div class="uk-width-1-1@s">
+      {{ form_macros.render_field(form.descr, "text") }}
+    </div>
 
     <div class="uk-margin">
       {{ form.submit(class="uk-button uk-button-primary uk-button-small") }}
-      <button onclick="window.location='{{ url_for('events.index') }}'" type="button" class="uk-button uk-button-danger uk-button-small">Annulla</button>
+      <button
+        onclick="window.location='{{ url_for('events.index') }}'"
+        type="button"
+        class="uk-button uk-button-danger uk-button-small"
+      >
+        Annulla
+      </button>
     </div>
-  </div>
-</form>
+  </form>
+</div>
 {% endblock %}

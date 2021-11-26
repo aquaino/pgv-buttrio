@@ -1,28 +1,38 @@
-{% extends "base.html" %}
-{% import "macros/form_macros.html" as form_macros %}
-
+{% extends "base.html" %} {% import "macros/form_macros.html" as form_macros %}
 {% block content %}
-  <h2 class="uk-margin-remove"><i class="bi bi-trash-fill uk-text-primary"></i>&nbsp;{{ page_title }}</h2>
+<h2 class="uk-margin-remove">
+  <span uk-icon="icon: trash; ratio: 2" class="uk-text-primary"></span>&nbsp;{{
+  page_title }}
+</h2>
 
-  <form method="POST" class="uk-margin">
-    <fieldset class="uk-fieldset">
-      <legend class="uk-legend">Conferma eliminazione</legend>
-      <input type="hidden" name="_method" value="DELETE">
-      {{ form.csrf_token }}
-      {{ form_macros.render_field(form.subtype, "multiple-select") }}
+<form method="POST" class="uk-form-stacked uk-margin">
+  <input type="hidden" name="_method" value="DELETE" />
+  {{ form.csrf_token }} {{ form_macros.render_field(form.subtype,
+  "multiple-select") }}
 
-      <div class="uk-margin">
-        {{ form.submit(class="uk-button uk-button-primary uk-button-small") }}
-        <button id="select_all" type="button" class="uk-button uk-button-default uk-button-small">Seleziona tutto</button>
-        <button onclick="window.location='{{ url_for('users.index') }}'" type="button" class="uk-button uk-button-danger uk-button-small">Annulla</button>
-      </div>
-    </fieldset>
-  </form>
-  <script>
+  <div class="uk-margin">
+    {{ form.submit(class="uk-button uk-button-primary uk-button-small") }}
+    <button
+      id="select_all"
+      type="button"
+      class="uk-button uk-button-default uk-button-small"
+    >
+      Seleziona tutto
+    </button>
+    <button
+      onclick="window.location='{{ url_for('users.index') }}'"
+      type="button"
+      class="uk-button uk-button-danger uk-button-small"
+    >
+      Annulla
+    </button>
+  </div>
+</form>
+<script>
   $(document).ready(function() {
-    $('#select_all').click(function() {
-      $('#subtype option').prop('selected', true);
+    $("#select_all").click(function() {
+      $("#subtype option").prop("selected", true);
     });
   });
-  </script>
+</script>
 {% endblock %}

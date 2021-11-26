@@ -4,42 +4,69 @@
 
 {% if action == "new" %}
   {% set page_title = "Nuovo volontario" %}
-  {% set page_icon = "bi-person-plus-fill" %}
+  {% set page_icon = "plus" %}
 {% elif action == "update" %}
   {% set page_title = "Modifica volontario" %}
-  {% set page_icon = "bi-gear-fill" %}
+  {% set page_icon = "cog" %}
   {% set hidden_method = "PATCH" %}
 {% endif %}
 
 {% block content %}
-<h2 class="uk-margin-remove"><i class="bi {{ page_icon }} uk-text-primary"></i>&nbsp;{{ page_title }}</h2>
-<form method="POST" class="uk-margin">
-  <fieldset class="uk-fieldset">
-    <legend class="uk-legend">Dati del volontario</legend>
-
+<h2 class="uk-margin-remove"><span uk-icon="icon: {{ page_icon }}; ratio: 2" class="uk-text-primary"></span>&nbsp;{{ page_title }}</h2>
+<div class="uk-container-small uk-margin-top">
+  <form method="POST" class="uk-form-stacked uk-grid-small" uk-grid>
     {% if action == "update" %}
       <input type="hidden" name="_method" value="{{ hidden_method }}">
     {% endif %}
     {{ form.csrf_token }}
 
-    {{ form_macros.render_field(form.subtype, "multiple-select") }}
-    {{ form_macros.render_field(form.firstname, "simple") }}
-    {{ form_macros.render_field(form.lastname, "simple") }}
-    {{ form_macros.render_field(form.gender, "select") }}
-    {{ form_macros.render_field(form.born_on, "simple") }}
-    {{ form_macros.render_field(form.born_in, "simple") }}
-    {{ form_macros.render_field(form.zip, "simple") }}
-    {{ form_macros.render_field(form.city, "simple") }}
-    {{ form_macros.render_field(form.address, "simple") }}
-    {{ form_macros.render_field(form.email1, "simple") }}
-    {{ form_macros.render_field(form.email2, "simple") }}
-    {{ form_macros.render_field(form.tel1, "simple") }}
-    {{ form_macros.render_field(form.tel2, "simple") }}
-    {{ form_macros.render_field(form.notes, "text") }}
+    <div class="uk-width-1-1@s">
+      {{ form_macros.render_field(form.subtype, "multiple-select") }}
+    </div>
+    <div class="uk-width-1-2@s">
+      {{ form_macros.render_field(form.firstname, "simple") }}
+    </div>
+    <div class="uk-width-1-2@s">
+      {{ form_macros.render_field(form.lastname, "simple") }}
+    </div>
+    <div class="uk-width-1-3@s">
+      {{ form_macros.render_field(form.gender, "select") }}
+    </div>
+    <div class="uk-width-1-3@s">
+      {{ form_macros.render_field(form.born_on, "simple") }}
+    </div>
+    <div class="uk-width-1-3@s">
+      {{ form_macros.render_field(form.born_in, "simple") }}
+    </div>
+    <div class="uk-width-1-3@s">
+      {{ form_macros.render_field(form.zip, "simple") }}
+    </div>
+    <div class="uk-width-1-3@s">
+      {{ form_macros.render_field(form.city, "simple") }}
+    </div>
+    <div class="uk-width-1-3@s">
+      {{ form_macros.render_field(form.address, "simple") }}
+    </div>
+    <div class="uk-width-1-2@s">
+      {{ form_macros.render_field(form.email1, "simple") }}
+    </div>
+    <div class="uk-width-1-2@s">
+      {{ form_macros.render_field(form.email2, "simple") }}
+    </div>
+    <div class="uk-width-1-2@s">
+      {{ form_macros.render_field(form.tel1, "simple") }}
+    </div>
+    <div class="uk-width-1-2@s">
+      {{ form_macros.render_field(form.tel2, "simple") }}
+    </div>
+    <div class="uk-width-1-1@s">
+      {{ form_macros.render_field(form.notes, "text") }}
+    </div>
+
     <div class="uk-margin">
       {{ form.submit(class="uk-button uk-button-primary uk-button-small") }}
       <button onclick="window.location='{{ url_for('users.index') }}'" type="button" class="uk-button uk-button-danger uk-button-small">Annulla</button>
     </div>
-  </div>
 </form>
+</div>
 {% endblock %}

@@ -4,39 +4,56 @@
 
 {% if action == "new" %}
   {% set page_title = "Nuova attività" %}
-  {% set page_icon = "bi-person-plus-fill" %}
+  {% set page_icon = "plus" %}
 {% elif action == "update" %}
   {% set page_title = "Modifica attività" %}
-  {% set page_icon = "bi-gear-fill" %}
+  {% set page_icon = "cog" %}
   {% set hidden_method = "PATCH" %}
 {% endif %}
 
 {% block content %}
-<h2 class="uk-margin-remove"><i class="bi {{ page_icon }} uk-text-primary"></i>&nbsp;{{ page_title }}</h2>
-<form method="POST" class="uk-margin">
-  <fieldset class="uk-fieldset">
-    <legend class="uk-legend">Dati dell'attività</legend>
+<h2 class="uk-margin-remove"><span uk-icon="icon: {{ page_icon }}; ratio: 2" class="uk-text-primary"></span>&nbsp;{{ page_title }}</h2>
+<div class="uk-container-small uk-margin-top">
+  <form method="POST" class="uk-form-stacked uk-grid-small" uk-grid>
     {% if action == "update" %}
-      <input type="hidden" name="_method" value="{{ hidden_method }}">
+    <input type="hidden" name="_method" value="{{ hidden_method }}">
     {% endif %}
     {{ form.csrf_token }}
 
-    {{ form_macros.render_field(form.subtype, "select") }}
-    {{ form_macros.render_field(form.user, "select") }}
-    {{ form_macros.render_field(form.date, "simple") }}
-    {{ form_macros.render_field(form.event, "select") }}
-    {{ form_macros.render_field(form.activity, "select") }}
-    {{ form_macros.render_field(form.start_time, "simple") }}
-    {{ form_macros.render_field(form.end_time, "simple") }}
-    {{ form_macros.render_field(form.location, "simple") }}
-    {{ form_macros.render_field(form.notes, "text") }}
+    <div class="uk-width-1-2@s">
+      {{ form_macros.render_field(form.subtype, "select") }}
+    </div>
+    <div class="uk-width-1-2@s">
+      {{ form_macros.render_field(form.user, "select") }}
+    </div>
+    <div class="uk-width-1-2@s">
+      {{ form_macros.render_field(form.date, "simple") }}
+    </div>
+    <div class="uk-width-1-2@s">
+      {{ form_macros.render_field(form.event, "select") }}
+    </div>
+    <div class="uk-width-1-2@s">
+      {{ form_macros.render_field(form.activity, "select") }}
+    </div>
+    <div class="uk-width-1-4@s">
+      {{ form_macros.render_field(form.start_time, "simple") }}
+    </div>
+    <div class="uk-width-1-4@s">
+      {{ form_macros.render_field(form.end_time, "simple") }}
+    </div>
+    <div class="uk-width-1-1@s">
+      {{ form_macros.render_field(form.location, "simple") }}
+    </div>
+    <div class="uk-width-1-1@s">
+      {{ form_macros.render_field(form.notes, "text") }}
+    </div>
 
     <div class="uk-margin">
       {{ form.submit(class="uk-button uk-button-primary uk-button-small") }}
       <button onclick="window.location='{{ url_for('activities.index') }}'" type="button" class="uk-button uk-button-danger uk-button-small">Annulla</button>
     </div>
-  </div>
-</form>
+  </form>
+</div>
 
 <script>
   $(document).ready(function() {

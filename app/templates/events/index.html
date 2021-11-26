@@ -4,10 +4,12 @@
 {% import "macros/table_macros.html" as table_macros %}
 
 {% block content %}
-<div class="uk-flex uk-flex-wrap uk-flex-between uk-flex-top">
-  <h2><i class="bi bi-calendar-week-fill uk-text-primary"></i>&nbsp;{{ page_title }}</h2>
+<div class="uk-grid-small uk-child-width-1-2@s uk-margin-bottom" uk-grid>
   <div>
-    <button type="button" onclick="window.location='{{ url_for('events.new_event') }}'" class="uk-button uk-button-primary uk-button-small"><i class="bi bi-plus-circle-fill"></i><span class="uk-visible@s">&nbsp;Aggiungi</span></button>
+    <h2><span uk-icon="icon: calendar; ratio: 2" class="uk-text-primary"></span>&nbsp;{{ page_title }}</h2>
+  </div>
+  <div class="uk-text-right@s">
+    <button type="button" onclick="window.location='{{ url_for('events.new_event') }}'" class="uk-button uk-button-primary uk-button-small"><span uk-icon="plus"></span>&nbsp;Aggiungi</button>
   </div>
 </div>
 

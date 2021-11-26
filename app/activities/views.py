@@ -87,7 +87,7 @@ def duplicate_activity(activity_id):
 
         return redirect(url_for("activities.index"))
 
-    return render_template("confirm_update.html", form=form, page_title="Duplicazione attività", item_name=event.name)
+    return render_template("confirm_duplication.html", form=form, page_title="Duplicazione attività", item_name=event.name)
 
 @bp.route("/new-activity", methods=("GET", "POST"))
 @register_breadcrumb(bp, '.new-activity', 'Nuova attività')

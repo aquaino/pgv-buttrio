@@ -1,37 +1,37 @@
 {% extends "base.html" %} {% set page_title = "Home" %} {% block content %}
 <h2 class="uk-margin-remove-top">
-  <i class="bi bi-house-fill uk-text-primary"></i>&nbsp;{{ page_title }}
+  <span uk-icon="icon: home; ratio: 2" class="uk-text-primary"></span>&nbsp;{{ page_title }}
 </h2>
 
 {% set home_cards = [
   {
     "title": "Volontari",
     "url": "users.index",
-    "icon": "person-lines-fill",
+    "icon": "users",
     "body": "Gestione dei volontari dei vari gruppi comunali."
   },
   {
     "title": "Eventi",
     "url": "events.index",
-    "icon": "calendar-week-fill",
+    "icon": "calendar",
     "body": "Gestione degli eventi che richiedono la partecipazione dei volontari."
   },
   {
     "title": "Attività",
     "url": "activities.index",
-    "icon": "file-earmark-spreadsheet-fill",
+    "icon": "list",
     "body": "Gestione delle varie attività svolte dai volontari."
   },
   {
     "title": "Report",
     "url": "reports.index",
-    "icon": "bar-chart-fill",
+    "icon": "history",
     "body": "Consultazione dei report preconfigurati."
   },
 ] %}
 
 <div class="row">
-  <div class="uk-child-width-1-4@s uk-grid-small" uk-grid uk-height-match="target: a > div > .uk-card">
+  <div class="uk-child-width-1-2@s uk-grid-small" uk-grid uk-height-match="target: a > div > .uk-card">
 
     {% for card in home_cards %}
     <a class="uk-text-decoration-none" href="{{ url_for(card.url) }}">
@@ -39,12 +39,12 @@
         <div class="uk-card uk-card-hover uk-card-small uk-card-default">
           <div class="uk-card-header uk-flex uk-flex-between uk-flex-middle">
             <h3 class="uk-card-title uk-margin-remove">{{ card.title }}</h3>
-            <i class="bi bi-{{ card.icon }} uk-text-large uk-text-primary"></i>
+            <span uk-icon="icon: {{ card.icon }}; ratio: 1.5" class="uk-text-primary"></span>
           </div>
           <div class="uk-card-body">
             {{ card.body }}
             <div class="uk-margin-small-top">
-              <i class="bi bi-arrow-right uk-text-primary uk-text-lead"></i>
+              <span uk-icon="icon: arrow-right; ratio: 1.5" class="uk-text-primary"></span>
             </div>
           </div>
         </div>
