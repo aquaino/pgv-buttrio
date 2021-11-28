@@ -2,7 +2,7 @@ from flask import Blueprint, request
 from flask import render_template
 from app.auth.views import login_required
 from app.models import db, Event, GreenBookCategory
-from app.events.forms import NewUpdateEventForm
+from app.events.forms import NewEventForm, UpdateEventForm
 from app.forms import ConfirmActionForm
 from flask import flash, redirect, url_for, abort
 from sqlalchemy.orm.session import make_transient
@@ -27,7 +27,7 @@ def index():
 @login_required
 def new_event():
     """Create a new event."""
-    form = NewUpdateEventForm()
+    form = NewEventForm()
     # Flatten the query result to a list of tuples (id, name)
     # This way the option values of the select field in the form are the GB categories ids
     form.gb_category.choices = [(row.id, row.name) for row in GreenBookCategory.query.with_entities(GreenBookCategory.id, GreenBookCategory.name)]
@@ -72,7 +72,7 @@ def update_event(event_id):
     # Populate fields with current data
     event = Event.query.filter_by(id=event_id).first()
     current_cat = GreenBookCategory.query.filter_by(id=event.green_book_cat_id).first()
-    form = NewUpdateEventForm(gb_category=current_cat.id, name = event.name, descr = event.descr)
+    form = UpdateEventForm(id=event_id, gb_category=current_cat.id, name = event.name, descr = event.descr)
 
     form.gb_category.choices = [(row.id, row.name) for row in GreenBookCategory.query.with_entities(GreenBookCategory.id, GreenBookCategory.name)]
 
@@ -80,6 +80,7 @@ def update_event(event_id):
         abort(404)
 
     if form.validate_on_submit():
+        event.id = form.id.data
         event.green_book_cat_id = form.gb_category.data
         event.name = form.name.data
         event.descr = form.descr.data

@@ -11,7 +11,10 @@ block content %}
   <form method="POST" class="uk-form-stacked uk-grid-small" uk-grid>
     {% if action == "update" %}
     <input type="hidden" name="_method" value="{{ hidden_method }}" />
-    {% endif %} {{ form.csrf_token }}
+    {% endif %}
+
+    {{ form.csrf_token }}
+    {{ form.id }}
 
     <div class="uk-width-1-2@s">
       {{ form_macros.render_field(form.gb_category, "select") }}

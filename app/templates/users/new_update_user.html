@@ -18,7 +18,9 @@
     {% if action == "update" %}
       <input type="hidden" name="_method" value="{{ hidden_method }}">
     {% endif %}
+
     {{ form.csrf_token }}
+    {{ form.id }}
 
     <div class="uk-width-1-1@s">
       {{ form_macros.render_field(form.subtype, "multiple-select") }}

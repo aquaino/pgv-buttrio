@@ -3,26 +3,16 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
+  <!-- Favicon -->
   <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
-
-  <!-- UIkit CSS & JS -->
+  <!-- UIkit CSS -->
   <link rel="stylesheet" href="{{ url_for('static', filename='css/main.min.css') }}"/>
-  <script src="{{ url_for('static', filename='js/uikit.min.js') }}"></script>
-
-  <!-- UIkit Icons -->
-  <script src="{{ url_for('static', filename='js/uikit-icons.min.js') }}"></script>
-  
   <!-- DataTable UIkit CSS -->
   <link rel="stylesheet" href="https://cdn.datatables.net/1.11.3/css/dataTables.uikit.min.css">
   <!-- Custom CSS -->
   <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-
   <!-- JQuery -->
   <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
-
-  <!-- Moment.js -->
-  {{ moment.include_moment() }}
-  {{ moment.locale("it") }}
 
   <title>PGV - {{ page_title }}</title>
 </head>

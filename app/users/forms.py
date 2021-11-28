@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField, TextAreaField, SelectField, SelectMultipleField
+from wtforms import StringField, PasswordField, SubmitField, TextAreaField, SelectField, SelectMultipleField, HiddenField
 from wtforms.fields.html5 import EmailField, TelField, DateField
 from wtforms.validators import InputRequired, Optional, ValidationError
 from app.models import User
@@ -32,9 +32,12 @@ class NewUserForm(FlaskForm):
             raise ValidationError("Esiste già un utente con questo indirizzo email primario.")
 
 class UpdateUserForm(NewUserForm):
-    # Avoid email1 validation on user update
+    id = HiddenField()
     def validate_email1(form, email1):
-        pass
+        """Check if already exists a user with the same primary email."""
+        searched_by_email = User.query.filter_by(email1=email1.data).first()
+        if searched_by_email and searched_by_email.id != int(form.id.data):
+            raise ValidationError("Esiste già un utente con questo indirizzo email primario.")
 
 class ConfirmUserDeletionForm(FlaskForm):
     subtype = SelectMultipleField("Da quali gruppi si desidera rimuovere il volontario?", description="È possibile selezionare più gruppi. Selezionandoli tutti il volontario verrà rimosso dal sistema.", validators=[InputRequired()], coerce=int)
