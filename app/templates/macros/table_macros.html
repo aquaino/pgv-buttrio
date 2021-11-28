@@ -53,23 +53,25 @@
 {% endmacro %}
 
 {% macro render_item_buttons(update_url, duplicate_url, delete_url) %}
-  <td class="uk-text-center">
+  <td class="uk-text-right">
     <div class="item-buttons uk-flex-inline">
       {% if update_url %}
-        <a href="{{ update_url }}" title="Modifica" class="uk-icon-link uk-text-primary uk-margin-small-left" uk-icon="cog"></a>
+        <a href="{{ update_url }}" title="Modifica" class="uk-icon-button uk-text-primary uk-background-default" uk-icon="icon: cog; ratio: .85;"></a>
       {% endif %}
       {% if duplicate_url %}
-        <a href="{{ duplicate_url}}" title="Duplica" class="uk-icon-link uk-text-primary uk-margin-small-left" uk-icon="copy"></a>
+        <a href="{{ duplicate_url}}" title="Duplica" class="uk-icon-button uk-text-primary uk-background-default" uk-icon="icon: copy; ratio: .85;"></a>
       {% endif %}
       {% if delete_url %}
-        <a href="{{ delete_url }}" title="Elimina" class="uk-icon-link uk-text-primary uk-margin-small-left" uk-icon="trash"></a>
+        <a href="{{ delete_url }}" title="Elimina" class="uk-icon-button uk-text-primary uk-background-default" uk-icon="icon: trash; ratio: .85;"></a>
       {% endif %}
     </div>
   </td>
 
   <style>
-    .item-buttons svg {
-      min-width: max-content;
+    .item-buttons a {
+      width: 28px;
+      height: 28px;
+      margin-left: 6px;
     }
   </style>
 {% endmacro %}

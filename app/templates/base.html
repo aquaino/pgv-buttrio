@@ -10,10 +10,9 @@
     {% include "partials/navbar.html" %}
 
     <!-- Page content -->
-    <main>
+    <main uk-height-viewport="expand: true;">
       <div
         class="uk-container uk-container-expand uk-margin-top uk-margin-large-bottom"
-        uk-height-viewport="expand: true;"
       >
         {% for category, message in get_flashed_messages(with_categories=true) %}
           <div class="{% if category == 'error' %} uk-alert-danger {% elif category == 'info' %} uk-alert-success {% elif category == 'warning' %} uk-alert-warning {% endif %} alert-dismissible fade show" uk-alert>
