@@ -53,7 +53,7 @@
 {% endmacro %}
 
 {% macro render_item_buttons(update_url, duplicate_url, delete_url) %}
-  <td class="uk-text-right">
+  <td>
     <div class="item-buttons uk-flex-inline">
       {% if update_url %}
         <a href="{{ update_url }}" title="Modifica" class="uk-icon-button uk-text-primary uk-background-default" uk-icon="icon: cog; ratio: .85;"></a>
@@ -93,17 +93,20 @@
         <table id="{{ table_id }}" class="uk-table uk-table-small uk-table-striped uk-table-hover">
           <thead>
             <tr>
-              {% for header in headers%}
-                <th>{{ header }}</th>
-              {% endfor %}
               {% if not all_flag %}
                 <th></th>
               {% endif %}
+              {% for header in headers%}
+                <th>{{ header }}</th>
+              {% endfor %}
             </tr>
           </thead>
           <tbody>
             {% for user in users %}
             <tr>
+              {% if not all_flag %}
+                {{ render_item_buttons(url_for('users.update_user', user_id=user.id), url_for('users.duplicate_user', user_id=user.id, subtype_id=user.subtype_id), url_for('users.delete_user', user_id=user.id, subtype_id=user.subtype_id)) }}
+              {% endif %}
               <td>{{ replace_if_none(user.lastname) }}</td>
               <td>{{ replace_if_none(user.firstname) }}</td>
               <td>{{ replace_if_none(user.gender) }}</td>
@@ -124,9 +127,6 @@
                 <td>{{ user.subtype_name }}</td>
               {% endif %}
               <td>{{ replace_if_none(user.notes) }}</td>
-              {% if not all_flag %}
-                {{ render_item_buttons(url_for('users.update_user', user_id=user.id), url_for('users.duplicate_user', user_id=user.id, subtype_id=user.subtype_id), url_for('users.delete_user', user_id=user.id, subtype_id=user.subtype_id)) }}
-              {% endif %}
             </tr>
             {% endfor %}
           </tbody>
@@ -157,19 +157,19 @@
         <table id="{{ table_id }}" class="uk-table uk-table-small uk-table-striped uk-table-hover">
           <thead>
             <tr>
+              <th></th>
               {% for header in headers%}
                 <th>{{ header }}</th>
               {% endfor %}
-              <th></th>
             </tr>
           </thead>
           <tbody>
             {% for event in events %}
             <tr>
+              {{ render_item_buttons(url_for('events.update_event', event_id=event.id), url_for('events.duplicate_event', event_id=event.id), url_for('events.delete_event', event_id=event.id)) }}
               <td>{{ event.cat_name }}</td>
               <td>{{ event.name }}</td>
               <td>{{ replace_if_none(event.descr) }}</td>
-              {{ render_item_buttons(url_for('events.update_event', event_id=event.id), url_for('events.duplicate_event', event_id=event.id), url_for('events.delete_event', event_id=event.id)) }}
             </tr>
             {% endfor %}
           </tbody>
@@ -200,15 +200,16 @@
         <table id="{{ table_id }}" class="uk-table uk-table-small uk-table-striped uk-table-hover">
           <thead>
             <tr>
+              <th></th>
               {% for header in headers%}
                 <th>{{ header }}</th>
               {% endfor %}
-              <th></th>
             </tr>
           </thead>
           <tbody>
             {% for activity in activities %}
             <tr>
+              {{ render_item_buttons(url_for('activities.update_activity', activity_id=activity.id), url_for('activities.duplicate_activity', activity_id=activity.id), url_for('activities.delete_activity', activity_id=activity.id)) }}
               <td>{{ activity.date.strftime('%d/%m/%Y') }}</td>
               {% with user = activity.lastname + " " + activity.firstname %}
                 <td>{{ user }}</td>
@@ -220,7 +221,6 @@
               <td>{{ activity.end_time }}</td>
               <td>{{ activity.location }}</td>
               <td>{{ replace_if_none(activity.notes) }}</td>
-              {{ render_item_buttons(url_for('activities.update_activity', activity_id=activity.id), url_for('activities.duplicate_activity', activity_id=activity.id), url_for('activities.delete_activity', activity_id=activity.id)) }}
             </tr>
             {% endfor %}
           </tbody>

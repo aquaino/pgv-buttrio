@@ -7,6 +7,7 @@
 {% endmacro %}
 
 {% macro render_field(field, field_type) %}
+
   {% if field_type == "simple" %}
 
     <div class="uk-margin-small">
@@ -91,5 +92,24 @@
         </div>
     </div>
 
+    {% elif field_type == "boolean" %}
+
+    <div class="uk-margin-small">
+        {% if not field.errors %}
+          {{ field(class="uk-checkbox") }} {{ field.label(class="uk-form-label uk-display-inline") }}
+        {% else %}
+          {{ field(class="uk-checkbox uk-form-danger") }} {{ field.label(class="uk-form-label uk-display-inline") }}
+        {% endif %}
+        {% if field.description %}
+          <div class="uk-text-small uk-text-muted">
+            {{ field.description }}
+          </div>
+        {% endif %}
+        {% if field.errors %}
+          {{ render_field_errors(field) }}
+        {% endif %}
+    </div>
+
   {% endif %}
+
 {% endmacro %}

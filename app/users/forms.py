@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField, TextAreaField, SelectField, SelectMultipleField, HiddenField
+from wtforms import StringField, PasswordField, SubmitField, TextAreaField, SelectField, SelectMultipleField, HiddenField, BooleanField
 from wtforms.fields.html5 import EmailField, TelField, DateField
 from wtforms.validators import InputRequired, Optional, ValidationError
 from app.models import User
@@ -24,6 +24,8 @@ class NewUserForm(FlaskForm):
     tel1 = TelField("Numero di telefono", validators=[Optional(), only_numbers])
     tel2 = TelField("Numero di telefono secondario", validators=[Optional(), only_numbers])
     notes = TextAreaField("Note", filters=[lambda x: x or None])
+    admin = BooleanField("Amministratore")
+    password = PasswordField("Password", render_kw={"placeholder": "Imposta/modifica password"})
     submit = SubmitField("OK")
 
     def validate_email1(form, email1):

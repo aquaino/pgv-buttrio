@@ -38,6 +38,13 @@
     <div id="mobile-nav" uk-offcanvas="overlay: true; flip: true">
       <div class="uk-offcanvas-bar">
         <ul class="uk-nav uk-nav-default uk-text-uppercase">
+          <li style="text-transform: none; font-size: .8rem">
+            Connesso come
+            <a class='uk-text-bold uk-padding-remove' href="{{ url_for('users.update_user', user_id=g.user.id) }}" style="font-size: .875rem;">
+              {{ g.user.firstname }} {{ g.user.lastname }}
+            </a>
+          </li>
+          <hr class="uk-divider-small uk-margin-small">
           {%- for item in current_menu.children -%}
             <li {% if item.active %}class="uk-active"{% endif %}>
               <a href="{{ item.url }}">{{ item.text }}</a>

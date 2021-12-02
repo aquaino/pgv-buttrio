@@ -39,6 +39,12 @@
                 {{ form.submit(class="uk-button uk-button-primary uk-button-small") }}
               </div>
             </form>
+            {% for category, message in get_flashed_messages(with_categories=true) %}
+              <div class="{% if category == 'error' %} uk-alert-danger {% elif category == 'info' %} uk-alert-success {% elif category == 'warning' %} uk-alert-warning {% endif %} alert-dismissible fade show" uk-alert>
+                <a class="uk-alert-close" uk-close></a>
+                {{ message }}
+              </div>
+            {% endfor %}
           </div>
         </div>
       </div>

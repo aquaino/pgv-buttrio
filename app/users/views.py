@@ -8,6 +8,7 @@ from sqlalchemy.orm.session import make_transient
 import random
 from flask_menu import register_menu
 from flask_breadcrumbs import register_breadcrumb
+from werkzeug.security import generate_password_hash
 
 bp = Blueprint("users", __name__, url_prefix="/users")
 
@@ -52,7 +53,12 @@ def new_user():
 
     if form.validate_on_submit():
         # Create the user
-        user = User(firstname=form.firstname.data, lastname=form.lastname.data, gender=form.gender.data, born_on=form.born_on.data, born_in=form.born_in.data, zip=form.zip.data, city=form.city.data, address=form.address.data, email1=form.email1.data, email2=form.email2.data, tel1=form.tel1.data, tel2=form.tel2.data, notes=form.notes.data)
+        user = User(
+            firstname=form.firstname.data, lastname=form.lastname.data, gender=form.gender.data,
+            born_on=form.born_on.data, born_in=form.born_in.data, zip=form.zip.data, city=form.city.data,
+            address=form.address.data, email1=form.email1.data, email2=form.email2.data, tel1=form.tel1.data,
+            tel2=form.tel2.data, notes=form.notes.data, admin=form.admin.data
+        )
         db.session.add(user)
         db.session.commit()
 
@@ -168,7 +174,12 @@ def update_user(user_id):
     # Get the subtype ids to populate multiselect field
     subtype_defaults = [row[0] for row in UserSubtypeAssociation.query.with_entities(UserSubtypeAssociation.subtype_id).filter_by(user_id=user_id)]
 
-    form = UpdateUserForm(id=user_id , subtype=subtype_defaults, firstname=user.firstname, lastname=user.lastname, gender=user.gender, born_on=user.born_on, born_in=user.born_in, zip=user.zip, city=user.city, address=user.address, email1=user.email1, email2=user.email2, tel1=user.tel1, tel2=user.tel2, notes=user.notes)
+    form = UpdateUserForm(
+        id=user_id , subtype=subtype_defaults, firstname=user.firstname, lastname=user.lastname, gender=user.gender,
+        born_on=user.born_on, born_in=user.born_in, zip=user.zip, city=user.city, address=user.address,
+        email1=user.email1, email2=user.email2, tel1=user.tel1, tel2=user.tel2, notes=user.notes,
+        admin=user.admin
+    )
 
     form.gender.choices = ["Non specificato", "Uomo", "Donna"]
     form.subtype.choices = subtype_choices
@@ -188,6 +199,10 @@ def update_user(user_id):
         user.tel1 = form.tel1.data
         user.tel2 = form.tel2.data
         user.notes = form.notes.data
+        user.admin = form.admin.data
+        # Avoid empty password on update
+        if form.password.data:
+            user.password = generate_password_hash(form.password.data)
 
         # Update his subtype associations (create new or delete)
         associations_to_delete = list(set(subtype_defaults) - set(form.subtype.data))

@@ -21,12 +21,24 @@
           </div>
         {% endfor %}
 
-        <!-- Breadcrumbs -->
-        <ul class="uk-breadcrumb uk-background-muted uk-display-inline-block" style="padding: .25rem .66rem;">
-          {%- for breadcrumb in breadcrumbs -%}
-            <li><a href="{{ breadcrumb.url }}">{{ breadcrumb.text }}</a></li>
-          {%- endfor -%}
-        </ul>
+        <div class="uk-flex uk-flex-between uk-flex-wrap uk-flex-middle uk-margin">
+            <!-- Breadcrumbs -->
+            <ul class="uk-breadcrumb uk-background-muted uk-display-inline-block uk-margin-remove" style="padding: .25rem .66rem;">
+              {%- for breadcrumb in breadcrumbs -%}
+                <li><a href="{{ breadcrumb.url }}">{{ breadcrumb.text }}</a></li>
+              {%- endfor -%}
+            </ul>
+            <!-- Logged in user info -->
+            <div class="uk-text-small uk-text-muted uk-margin-remove uk-visible@s">
+                Connesso come
+                <a class='uk-text-decoration-none uk-padding-remove'
+                   href="{{ url_for('users.update_user', user_id=g.user.id) }}"
+                   style="font-size: .875rem;"
+                >
+                  {{ g.user.firstname }} {{ g.user.lastname }}
+                </a>
+            </div>
+        </div>
 
         {% block content %}{% endblock %}
       </div>
