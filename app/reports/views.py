@@ -44,4 +44,14 @@ def index():
     # Days count
     days_count = ActivityRecord.query.distinct(ActivityRecord.date).count()
 
-    return render_template("reports/index.html", users_count=users_count, activity_hours=activity_hours, users_by_type=users_by_type, events_count=events_count, days_count=days_count)
+    # Admins
+    admins = User.query.filter(User.admin==True).order_by(User.lastname).all()
+
+    return render_template("reports/index.html",
+        users_count=users_count,
+        activity_hours=activity_hours,
+        users_by_type=users_by_type,
+        events_count=events_count,
+        days_count=days_count,
+        admins=admins
+    )

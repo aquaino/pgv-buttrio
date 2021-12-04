@@ -33,6 +33,11 @@ class NewUserForm(FlaskForm):
         if User.query.filter_by(email1=email1.data).first():
             raise ValidationError("Esiste già un utente con questo indirizzo email primario.")
 
+    def validate_password(form, password):
+        """Check if the given password is empty, only if the user doesn't have already a password and if the admin checkbox is flagged."""
+        if (form.admin.data is True) and (not password.data) and (not User.query.filter_by(email1=form.email1.data).first().password):
+            raise ValidationError("Password non specificata.")
+
 class UpdateUserForm(NewUserForm):
     id = HiddenField()
     def validate_email1(form, email1):
