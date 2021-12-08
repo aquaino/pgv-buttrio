@@ -22,7 +22,9 @@ def index():
     def users_by_type(type_name):
         """General query structure for different type of users."""
         users = User.query\
-            .with_entities(User.id, User.firstname, User.lastname, User.gender, User.born_on, User.born_in, User.zip, User.city, User.address, User.email1, User.email2, User.tel1, User.tel2, User.notes, UserSubtype.name.label("subtype_name"), UserSubtype.id.label("subtype_id"))\
+            .with_entities(User.id, User.firstname, User.lastname, User.gender, User.born_on, User.born_in, User.zip,
+                           User.city, User.address, User.email1, User.email2, User.tel1, User.tel2, User.notes,
+                           UserSubtype.name.label("subtype_name"), UserSubtype.id.label("subtype_id"))\
             .join(UserSubtypeAssociation, UserSubtypeAssociation.user_id == User.id)\
             .join(UserSubtype, UserSubtype.id == UserSubtypeAssociation.subtype_id)\
             .join(UserType, UserType.id == UserSubtype.type_id)\

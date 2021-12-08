@@ -6,10 +6,11 @@ from flask_breadcrumbs import Breadcrumbs
 from flask import render_template
 from flask_breadcrumbs import register_breadcrumb, default_breadcrumb_root
 from app.auth.views import login_required
+from flask_debugtoolbar import DebugToolbarExtension
 
 def create_app(test_config=None):
     """Create and configure an instance of the Flask application."""
-    # Create and configure the app (from .flaskenv file)
+    # Create and configure the app (from .flaskenv file)
     app = Flask(__name__)
     app.config.from_pyfile("config.py")
 
@@ -21,7 +22,10 @@ def create_app(test_config=None):
     migrate = Migrate(app, db)
 
     # Flask menu and breadcrumbs
-    Breadcrumbs(app=app)
+    Breadcrumbs(app)
+
+    # Debug toolbar (only when in debug mode)
+    toolbar = DebugToolbarExtension(app)
 
     # Apply the blueprints to the app
     from app import auth, users, events, activities, reports
@@ -39,8 +43,6 @@ def create_app(test_config=None):
     @login_required
     def index():
         return render_template("index.html")
-
-    app.add_url_rule('/', endpoint='index')
 
     # Import CLI commands
     from app.commands import recreate_db_command, setup_db_command, compile_scss_watch_command
