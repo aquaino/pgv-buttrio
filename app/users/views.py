@@ -1,14 +1,15 @@
-from flask import Blueprint, flash, abort, redirect, url_for, render_template, request
-from app.auth.views import login_required
-from app.models import db, User, UserSubtypeAssociation, UserSubtype, UserType
-from datetime import datetime
-from app.users.forms import NewUserForm, ConfirmUserDeletionForm, UpdateUserForm
-from app.forms import ConfirmActionForm
-from sqlalchemy.orm.session import make_transient
 import random
-from flask_menu import register_menu
+
+from flask import Blueprint, flash, abort, redirect, url_for, render_template, request
 from flask_breadcrumbs import register_breadcrumb
+from flask_menu import register_menu
+from sqlalchemy.orm.session import make_transient
 from werkzeug.security import generate_password_hash
+
+from app.auth.views import login_required
+from app.forms import ConfirmActionForm
+from app.models import db, User, UserSubtypeAssociation, UserSubtype, UserType
+from app.users.forms import NewUserForm, ConfirmUserDeletionForm, UpdateUserForm
 
 bp = Blueprint("users", __name__, url_prefix="/users")
 

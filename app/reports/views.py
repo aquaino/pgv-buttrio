@@ -1,11 +1,12 @@
 from flask import Blueprint, render_template
+from flask import current_app
+from flask_breadcrumbs import register_breadcrumb
+from flask_menu import register_menu
+from sqlalchemy import create_engine
+from sqlalchemy import func, desc
+
 from app.auth.views import login_required
 from app.models import User, UserSubtypeAssociation, UserSubtype, UserType, Event, ActivityRecord
-from sqlalchemy import create_engine
-from flask import current_app
-from sqlalchemy import func, desc
-from flask_menu import register_menu
-from flask_breadcrumbs import register_breadcrumb
 
 bp = Blueprint("reports", __name__, url_prefix="/reports")
 

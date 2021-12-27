@@ -2,26 +2,24 @@
 {% set page_title = "Gestione volontari" %}
 
 {% import "macros/table_macros.html" as table_macros with context %}
+{% import "macros/page_macros.html" as page_macros with context %}
 
 {% block content %}
-<div class="uk-grid-small uk-child-width-1-2@s uk-margin-bottom" uk-grid>
-  <div>
-    <h2><span uk-icon="icon: users; ratio: 2" class="uk-text-primary"></span></i>&nbsp;{{ page_title }}</h2>
-  </div>
-  <div class="uk-text-right@s">
-    <button type="button" onclick="window.location='{{ url_for('users.all_users') }}'" class="uk-button uk-button-default uk-button-small"><span uk-icon="table"></span>&nbsp;Tutti</button>
-    <button type="button" onclick="window.location='{{ url_for('users.new_user') }}'" class="uk-button uk-button-primary uk-button-small"><span uk-icon="plus"></span>&nbsp;Aggiungi</button>
-  </div>
-</div>
+    {{ page_macros.render_page_title(
+        page_title,
+        "users",
+        [{"text": "Tutti", "icon": "table", "color": "default", "url": "users.all_users"},
+        {"text": "Aggiungi", "icon": "plus", "color": "primary", "url": "users.new_user"}])
+    }}
 
-{{ table_macros.render_users_table("Protezione Civile", pc) }}
-<div class="uk-margin-top">
-  {{ table_macros.render_users_table("Alpini", alpini) }}
-</div>
-<div class="uk-margin-top">
-  {{ table_macros.render_users_table("Volontari occasionali", occasionali) }}
-</div>
-<div class="uk-margin-top">
-  {{ table_macros.render_users_table("Esterni non assicurati", non_assicurati) }}
-</div>
+    {{ table_macros.render_users_table("Protezione Civile", pc) }}
+    <div class="uk-margin-top">
+      {{ table_macros.render_users_table("Alpini", alpini) }}
+    </div>
+    <div class="uk-margin-top">
+      {{ table_macros.render_users_table("Volontari occasionali", occasionali) }}
+    </div>
+    <div class="uk-margin-top">
+      {{ table_macros.render_users_table("Esterni non assicurati", non_assicurati) }}
+    </div>
 {% endblock %}

@@ -1,11 +1,13 @@
-import click
-from flask.cli import with_appcontext
-from app.models import db, User, UserType, UserSubtype, UserSubtypeAssociation, GreenBookCategory, Event, Activity
-from werkzeug.security import generate_password_hash
-from flask.cli import with_appcontext
-from datetime import datetime
 import subprocess
+from datetime import datetime
+
+import click
 from flask import current_app
+from flask.cli import with_appcontext
+from werkzeug.security import generate_password_hash
+
+from app.models import db, User, UserType, UserSubtype, UserSubtypeAssociation, GreenBookCategory, Event, Activity
+
 
 @click.command("recreate-db")
 @with_appcontext

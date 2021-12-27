@@ -1,1 +1,1 @@
-from app.auth.views import bp
+from .views import bp

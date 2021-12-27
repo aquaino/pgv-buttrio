@@ -1,0 +1,20 @@
+{% macro render_page_title(title, icon, buttons) %}
+    <div class="uk-grid-small uk-child-width-1-2@s uk-margin-bottom" uk-grid>
+      <div>
+        <h2><span uk-icon="icon: {{ icon }}; ratio: 2" class="uk-text-primary"></span></i>&nbsp;{{ title }}</h2>
+      </div>
+      {% if (buttons) %}
+          <div class="uk-text-right@s">
+            {% for b in buttons %}
+                <button
+                    type="button"
+                    onclick="window.location='{{ url_for(b['url']) }}'"
+                    class="uk-button uk-button-{{ b['color'] }} uk-button-small"
+                >
+                    <span uk-icon="{{ b['icon'] }}"></span>&nbsp;{{ b['text'] }}
+                </button>
+            {% endfor %}
+          </div>
+      {% endif %}
+    </div>
+{% endmacro %}

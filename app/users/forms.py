@@ -1,8 +1,11 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField, TextAreaField, SelectField, SelectMultipleField, HiddenField, BooleanField
+from wtforms import StringField, PasswordField, SubmitField, TextAreaField, SelectField, SelectMultipleField, \
+    HiddenField, BooleanField
 from wtforms.fields.html5 import EmailField, TelField, DateField
 from wtforms.validators import InputRequired, Optional, ValidationError
+
 from app.models import User
+
 
 def only_numbers(form, data):
     """Validate if a string is made of digits (no text)."""

@@ -1,12 +1,13 @@
 from flask import Blueprint, render_template, flash, abort, redirect, url_for, request, jsonify
-from app.auth.views import login_required
-from app.models import db, ActivityRecord, User, UserSubtypeAssociation, UserSubtype, Activity, Event
-from app.activities.forms import NewUpdateActivityRecordForm
-from app.forms import ConfirmActionForm
-from sqlalchemy.orm.session import make_transient
-from sqlalchemy import desc
-from flask_menu import register_menu
 from flask_breadcrumbs import register_breadcrumb
+from flask_menu import register_menu
+from sqlalchemy import desc
+from sqlalchemy.orm.session import make_transient
+
+from app.activities.forms import NewUpdateActivityRecordForm
+from app.auth.views import login_required
+from app.forms import ConfirmActionForm
+from app.models import db, ActivityRecord, User, UserSubtypeAssociation, UserSubtype, Activity, Event
 
 bp = Blueprint("activities", __name__, url_prefix="/activities")
 

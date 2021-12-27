@@ -1,14 +1,16 @@
+import random
+
 from flask import Blueprint, request
+from flask import flash, redirect, url_for, abort
 from flask import render_template
+from flask_breadcrumbs import register_breadcrumb
+from flask_menu import register_menu
+from sqlalchemy.orm.session import make_transient
+
 from app.auth.views import login_required
-from app.models import db, Event, GreenBookCategory
 from app.events.forms import NewEventForm, UpdateEventForm
 from app.forms import ConfirmActionForm
-from flask import flash, redirect, url_for, abort
-from sqlalchemy.orm.session import make_transient
-import random
-from flask_menu import register_menu
-from flask_breadcrumbs import register_breadcrumb
+from app.models import db, Event, GreenBookCategory
 
 bp = Blueprint("events", __name__, url_prefix="/events")
 

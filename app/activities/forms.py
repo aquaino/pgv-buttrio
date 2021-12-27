@@ -2,7 +2,6 @@ from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField, TextAreaField, SelectField
 from wtforms.fields.html5 import DateField, TimeField
 from wtforms.validators import InputRequired, ValidationError
-from app.models import User
 
 class NewUpdateActivityRecordForm(FlaskForm):
     subtype = SelectField("Tipologia volontario*", validators=[InputRequired()])

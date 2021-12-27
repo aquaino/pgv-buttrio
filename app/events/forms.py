@@ -1,7 +1,9 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField, TextAreaField, SelectField, HiddenField
 from wtforms.validators import InputRequired, ValidationError
+
 from app.models import Event
+
 
 class NewEventForm(FlaskForm):
     gb_category = SelectField('Categoria Libro Verde*', validators=[InputRequired()])
