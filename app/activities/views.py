@@ -99,7 +99,7 @@ def new_activity():
 
     # Populate select fields
     form.subtype.choices = [(row.id, row.name) for row in UserSubtype.query.with_entities(UserSubtype.id, UserSubtype.name)]
-    form.user.choices = [(row.id, row.lastname + " " + row.firstname) for row in User.query.filter(User.email1 != "admin@admin.it").order_by(User.lastname)]
+    form.user.choices = [(row.id, row.lastname + " " + row.firstname) for row in User.query.filter(User.email != "admin@admin.it").order_by(User.lastname)]
     form.event.choices = [(row.id, row.name) for row in Event.query.with_entities(Event.id, Event.name)]
     form.activity.choices = [(row.id, row.name) for row in Activity.query.with_entities(Activity.id, Activity.name)]
 
@@ -134,7 +134,7 @@ def update_activity(activity_id):
     form = NewUpdateActivityRecordForm(subtype=activity.subtype_id, user=activity.user_id, date=activity.date, event=activity.event, activity=activity.activity_id, start_time=activity.start_time, end_time=activity.end_time, location=activity.location, notes=activity.notes)
 
     form.subtype.choices = [(row.id, row.name) for row in UserSubtype.query.with_entities(UserSubtype.id, UserSubtype.name)]
-    form.user.choices = [(row.id, row.lastname + " " + row.firstname) for row in User.query.filter(User.email1 != "admin@admin.it").order_by(User.lastname)]
+    form.user.choices = [(row.id, row.lastname + " " + row.firstname) for row in User.query.filter(User.email != "admin@admin.it").order_by(User.lastname)]
     form.event.choices = [(row.id, row.name) for row in Event.query.with_entities(Event.id, Event.name)]
     form.activity.choices = [(row.id, row.name) for row in Activity.query.with_entities(Activity.id, Activity.name)]
 

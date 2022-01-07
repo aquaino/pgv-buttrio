@@ -22,30 +22,28 @@ class NewUserForm(FlaskForm):
     zip = StringField("CAP", validators=[Optional(), only_numbers])
     city = StringField("Città")
     address = StringField("Indirizzo")
-    email1 = EmailField("Indirizzo email*", validators=[InputRequired()])
-    email2 = EmailField("Indirizzo email secondario")
-    tel1 = TelField("Numero di telefono", validators=[Optional(), only_numbers])
-    tel2 = TelField("Numero di telefono secondario", validators=[Optional(), only_numbers])
+    email = EmailField("Indirizzo email*", validators=[InputRequired()])
+    tel = TelField("Numero di telefono", validators=[Optional(), only_numbers])
     notes = TextAreaField("Note", filters=[lambda x: x or None])
     admin = BooleanField("Amministratore")
     password = PasswordField("Password", render_kw={"placeholder": "Imposta/modifica password"})
     submit = SubmitField("OK")
 
-    def validate_email1(form, email1):
+    def validate_email(form, email):
         """Check if already exists a user with the same primary email."""
-        if User.query.filter_by(email1=email1.data).first():
+        if User.query.filter_by(email=email.data).first():
             raise ValidationError("Esiste già un utente con questo indirizzo email primario.")
 
     def validate_password(form, password):
         """Check if the given password is empty, only if the user doesn't have already a password and if the admin checkbox is flagged."""
-        if (form.admin.data is True) and (not password.data) and (not User.query.filter_by(email1=form.email1.data).first().password):
+        if (form.admin.data is True) and (not password.data) and (not User.query.filter_by(email=form.email.data).first().password):
             raise ValidationError("Password non specificata.")
 
 class UpdateUserForm(NewUserForm):
     id = HiddenField()
-    def validate_email1(form, email1):
+    def validate_email(form, email):
         """Check if already exists a user with the same primary email."""
-        searched_by_email = User.query.filter_by(email1=email1.data).first()
+        searched_by_email = User.query.filter_by(email=email.data).first()
         if searched_by_email and searched_by_email.id != int(form.id.data):
             raise ValidationError("Esiste già un utente con questo indirizzo email primario.")
 

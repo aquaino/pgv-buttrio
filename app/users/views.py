@@ -8,7 +8,7 @@ from werkzeug.security import generate_password_hash
 
 from app.auth.views import login_required
 from app.forms import ConfirmActionForm
-from app.models import db, User, UserSubtypeAssociation, UserSubtype, UserType
+from app.models import db, User, UserSubtypeAssociation, UserSubtype, UserType, ActivityRecord
 from app.users.forms import NewUserForm, ConfirmUserDeletionForm, UpdateUserForm
 
 bp = Blueprint("users", __name__, url_prefix="/users")
@@ -24,7 +24,7 @@ def index():
         """General query structure for different type of users."""
         users = User.query\
             .with_entities(User.id, User.firstname, User.lastname, User.gender, User.born_on, User.born_in, User.zip,
-                           User.city, User.address, User.email1, User.email2, User.tel1, User.tel2, User.notes,
+                           User.city, User.address, User.email, User.tel, User.notes,
                            UserSubtype.name.label("subtype_name"), UserSubtype.id.label("subtype_id"))\
             .join(UserSubtypeAssociation, UserSubtypeAssociation.user_id == User.id)\
             .join(UserSubtype, UserSubtype.id == UserSubtypeAssociation.subtype_id)\
@@ -59,8 +59,7 @@ def new_user():
         user = User(
             firstname=form.firstname.data, lastname=form.lastname.data, gender=form.gender.data,
             born_on=form.born_on.data, born_in=form.born_in.data, zip=form.zip.data, city=form.city.data,
-            address=form.address.data, email1=form.email1.data, email2=form.email2.data, tel1=form.tel1.data,
-            tel2=form.tel2.data, notes=form.notes.data, admin=form.admin.data
+            address=form.address.data, email=form.email.data, tel=form.tel.data, notes=form.notes.data, admin=form.admin.data
         )
         db.session.add(user)
         db.session.commit()
@@ -106,16 +105,23 @@ def delete_user(user_id):
             assoc = UserSubtypeAssociation.query.filter_by(user_id=user_id, subtype_id=subtype_id).first()
             db.session.delete(assoc)
 
-        # If all the subtypes were selected, remove also the user
+        # If all the subtypes were selected also the user will be deleted
         removed_from_all = False
         if len(form.subtype.data) == len(form.subtype.choices):
-            db.session.delete(user)
             removed_from_all = True
 
-        db.session.commit()
-
         if removed_from_all:
-            flash("Volontario \"{}\" rimosso dal sistema.".format(fullname), "info")
+            # Check for any activities assigned to the user
+            has_activities = ActivityRecord.query.filter_by(user_id=user_id).first()
+
+            # If so, can't proceed
+            if has_activities:
+                flash("Il volontario \"{}\" non può essere rimosso dal sistema in quanto esistono delle attività a lui assegnate.".format(fullname), "error")
+            # Else delete the user
+            else:
+                db.session.delete(user)
+                db.session.commit()
+                flash("Volontario \"{}\" rimosso dal sistema.".format(fullname), "info")
         else:
             flash("Volontario \"{}\" eliminato dai gruppi selezionati.".format(fullname), "info")
 
@@ -139,7 +145,7 @@ def duplicate_user(user_id):
     if form.validate_on_submit():
         # Clone only the current subtype association
         assoc = UserSubtypeAssociation.query.filter_by(user_id=user_id, subtype_id=int(request.args.get("subtype_id"))).first()
-        old_email = user.email1
+        old_email = user.email
 
         # Clone the user with a new id and also his subtype association
         db.session.expunge(user)
@@ -147,7 +153,7 @@ def duplicate_user(user_id):
         make_transient(user)
         make_transient(assoc)
         user.id = None
-        user.email1 = "{}-{}".format(old_email, str(random.randint(0, 999)))
+        user.email = "{}-{}".format(old_email, str(random.randint(0, 999)))
         assoc.id = None
         db.session.add(user)
         db.session.commit()
@@ -180,7 +186,7 @@ def update_user(user_id):
     form = UpdateUserForm(
         id=user_id , subtype=subtype_defaults, firstname=user.firstname, lastname=user.lastname, gender=user.gender,
         born_on=user.born_on, born_in=user.born_in, zip=user.zip, city=user.city, address=user.address,
-        email1=user.email1, email2=user.email2, tel1=user.tel1, tel2=user.tel2, notes=user.notes,
+        email=user.email, tel=user.tel, notes=user.notes,
         admin=user.admin
     )
 
@@ -197,10 +203,8 @@ def update_user(user_id):
         user.zip = form.zip.data
         user.city = form.city.data
         user.address = form.address.data
-        user.email1 = form.email1.data
-        user.email2 = form.email2.data
-        user.tel1 = form.tel1.data
-        user.tel2 = form.tel2.data
+        user.email = form.email.data
+        user.tel = form.tel.data
         user.notes = form.notes.data
         user.admin = form.admin.data
         # Avoid empty password on update
@@ -230,6 +234,7 @@ def update_user(user_id):
 @login_required
 def all_users():
     """Show all users."""
-    users = User.query.all()
+    users = User.query.order_by(User.lastname).all()
 
     return render_template("users/all_users.html", users=users)
+

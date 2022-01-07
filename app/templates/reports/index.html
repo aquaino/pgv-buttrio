@@ -63,7 +63,7 @@
             <ul class="uk-list uk-list-divider">
               {% if (admins) %}
                 {% for u in admins %}
-                  {% if (u.email1 != 'admin@admin.it') %}
+                  {% if (u.email != 'admin@admin.it') %}
                     <li><a href="{{ url_for('users.update_user', user_id=u.id) }}">{{ u.lastname }} {{ u.firstname }}</a></li>
                   {% endif %}
                 {% endfor %}

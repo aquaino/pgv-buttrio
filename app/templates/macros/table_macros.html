@@ -84,9 +84,9 @@
     </div>
     <div class="uk-card-body">
       {% if not all_flag %}
-        {% set headers = ["Cognome", "Nome", "Genere", "Nato il", "Nato a", "CAP", "Città", "Indirizzo", "Email 1", "Email 2", "Tel 1", "Tel 2", "Tipologia", "Note"] %}
+        {% set headers = ["Cognome", "Nome", "Genere", "Nato il", "Nato a", "CAP", "Città", "Indirizzo", "Email", "Tel", "Tipologia", "Note"] %}
       {% else %}
-        {% set headers = ["Cognome", "Nome", "Genere", "Nato il", "Nato a", "CAP", "Città", "Indirizzo", "Email 1", "Email 2", "Tel 1", "Tel 2", "Note"] %}
+        {% set headers = ["Cognome", "Nome", "Genere", "Nato il", "Nato a", "CAP", "Città", "Indirizzo", "Email", "Tel", "Note"] %}
       {% endif %}
       {% set table_id = title.replace(" ", "-").lower() + "-table" %}
       <div class="uk-overflow-auto">
@@ -119,10 +119,8 @@
               <td>{{ replace_if_none(user.zip) }}</td>
               <td>{{ replace_if_none(user.city) }}</td>
               <td>{{ replace_if_none(user.address) }}</td>
-              <td>{{ replace_if_none(user.email1) }}</td>
-              <td>{{ replace_if_none(user.email2) }}</td>
-              <td>{{ replace_if_none(user.tel1) }}</td>
-              <td>{{ replace_if_none(user.tel2) }}</td>
+              <td>{{ replace_if_none(user.email) }}</td>
+              <td>{{ replace_if_none(user.tel) }}</td>
               {% if not all_flag %}
                 <td>{{ user.subtype_name }}</td>
               {% endif %}
@@ -194,7 +192,7 @@
       <span class="uk-label uk-background-muted uk-text-muted">{{ activities|length }} attività</span>
     </div>
     <div class="uk-card-body">
-      {% set headers = ["Data", "Volontario", "Tipologia vol.", "Evento", "Attività", "Inizio", "Fine", "Luogo", "Note"] %}
+      {% set headers = ["Data", "Volontario", "Tip. vol.", "Evento", "Attività", "Inizio", "Fine", "Luogo", "Note"] %}
       {% set table_id = title.replace(" ", "-").lower() + "-table" %}
       <div class="uk-overflow-auto">
         <table id="{{ table_id }}" class="uk-table uk-table-small uk-table-striped uk-table-hover">

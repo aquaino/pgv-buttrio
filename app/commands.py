@@ -24,7 +24,7 @@ def setup_db_command():
     """Fill database with demo data."""
 
     # Add admin user and some fake users
-    admin_user = User(firstname="Admin", lastname="Admin", email1="admin@admin.it", admin=True, password=generate_password_hash("admin"))
+    admin_user = User(firstname="Admin", lastname="Admin", email="admin@admin.it", admin=True, password=generate_password_hash("admin"))
     db.session.add(admin_user)
 
     fake_users = [
@@ -33,7 +33,7 @@ def setup_db_command():
         ("Michele", "De Luca", "Uomo", None, None, "33042", "Buttrio", "Via Che Non So", "micheledeluca@gmail.com", "1234567890"),
     ]
     for fake_user in fake_users:
-        user = User(firstname=fake_user[0], lastname=fake_user[1], gender=fake_user[2], born_on=fake_user[3], born_in=fake_user[4], zip=fake_user[5], city=fake_user[6], address=fake_user[7], email1=fake_user[8], tel1=fake_user[9])
+        user = User(firstname=fake_user[0], lastname=fake_user[1], gender=fake_user[2], born_on=fake_user[3], born_in=fake_user[4], zip=fake_user[5], city=fake_user[6], address=fake_user[7], email=fake_user[8], tel=fake_user[9])
         db.session.add(user)
 
     print("Admin and fake users created.")

@@ -49,7 +49,7 @@ def login():
         email = form.email.data
         password = form.password.data
         error = None
-        user = User.query.filter_by(email1=email).first()
+        user = User.query.filter_by(email=email).first()
 
         if user is None:
             error = "Indirizzo email non presente."
