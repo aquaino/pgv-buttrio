@@ -31,7 +31,7 @@ class UserType(db.Model):
     __tablename__ = "user_types"
 
     id = db.Column(db.Integer, primary_key=True, unique=True)
-    name = db.Column(db.String(), nullable=False)
+    name = db.Column(db.String(), nullable=False, unique=True)
     descr = db.Column(db.Text())
 
 class UserSubtypeAssociation(db.Model):

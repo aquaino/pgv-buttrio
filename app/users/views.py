@@ -35,11 +35,59 @@ def index():
 
         return users
 
+    def merge_subtypes(users, subtypes_count):
+        """Merge subtype fields for same user belonging to multiple subcategories."""
+        users_length = len(users)
 
-    pc = users_by_type("Protezione Civile")
-    alpini = users_by_type("Alpini")
-    occasionali = users_by_type("Volontari occasionali")
-    non_assicurati = users_by_type("Esterni non assicurati")
+        to_delete = []
+        i = 0
+        while i <= users_length - 1:
+            # To prevent index out of range
+            if i + subtypes_count - 1 >= users_length - 1:
+                subtypes_count = (users_length - 1) - i
+
+            k = i + 1
+            deleted_count = 0
+            while k <= i + subtypes_count:
+                if users[k][0] == users[i][0]:
+                    # Merge subtypes and sort them alphabetically
+                    users[i] = list(users[i])
+                    users[i][12] += ', ' + users[k][12]
+                    users[i][12] = ', '.join(map(str, sorted([subtype for subtype in users[i][12].split(', ')], key=str.lower)))
+                    users[i] = tuple(users[i])
+
+                    deleted_count += 1
+                    to_delete.insert(0, k)
+
+                k += 1
+
+            if deleted_count > 0:
+                i += deleted_count + 1
+            else:
+                i += 1
+
+        # Remove duplicated user records
+        for n in to_delete:
+            del (users[n])
+
+        return users
+
+    # Prepare data to send
+    pc_id = UserType.query.filter_by(name="Protezione Civile").first().id
+    pc_subtypes_count = UserSubtype.query.filter_by(type_id=pc_id).count()
+    pc = merge_subtypes(users_by_type("Protezione Civile"), pc_subtypes_count)
+
+    alpini_id = UserType.query.filter_by(name="Alpini").first().id
+    alpini_subtypes_count = UserSubtype.query.filter_by(type_id=alpini_id).count()
+    alpini = merge_subtypes(users_by_type("Alpini"), alpini_subtypes_count)
+
+    occ_id = UserType.query.filter_by(name="Volontari occasionali").first().id
+    occ_subtypes_count = UserSubtype.query.filter_by(type_id=occ_id).count()
+    occasionali = merge_subtypes(users_by_type("Volontari occasionali"), occ_subtypes_count)
+
+    est_id = UserType.query.filter_by(name="Esterni non assicurati").first().id
+    est_subtypes_count = UserSubtype.query.filter_by(type_id=est_id).count()
+    non_assicurati = merge_subtypes(users_by_type("Esterni non assicurati"), est_subtypes_count)
 
     return render_template("users/index.html", pc=pc, alpini=alpini, occasionali=occasionali, non_assicurati=non_assicurati)
 
