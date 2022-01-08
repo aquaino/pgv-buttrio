@@ -12,14 +12,14 @@
         {"text": "Aggiungi", "icon": "plus", "color": "primary", "url": "users.new_user"}])
     }}
 
-    {{ table_macros.render_users_table("Protezione Civile", pc) }}
+    {{ table_macros.render_users_table("Protezione Civile", pc, false) }}
     <div class="uk-margin-top">
-      {{ table_macros.render_users_table("Alpini", alpini) }}
+      {{ table_macros.render_users_table("Alpini", alpini, false) }}
     </div>
     <div class="uk-margin-top">
-      {{ table_macros.render_users_table("Volontari occasionali", occasionali) }}
+      {{ table_macros.render_users_table("Volontari occasionali", occasionali, false) }}
     </div>
     <div class="uk-margin-top">
-      {{ table_macros.render_users_table("Esterni non assicurati", non_assicurati) }}
+      {{ table_macros.render_users_table("Esterni non assicurati", non_assicurati, false) }}
     </div>
 {% endblock %}

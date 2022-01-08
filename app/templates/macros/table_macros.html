@@ -1,4 +1,4 @@
-{% macro table_scripts(table_id) %}
+{% macro table_scripts(card_id, table_id, collapsible) %}
   <script>
     $(document).ready(function() {
       // DataTable configuration
@@ -44,6 +44,27 @@
           });
         }
       });
+
+      if ({{ collapsible|lower }}) {
+        // Toggle user cards
+        $('#{{ card_id }}-header').click(function(e) {
+          var cardBody = $('#{{ card_id }} .uk-card-body');
+          if (cardBody.hasClass('collapsed')) {
+            cardBody.removeClass('collapsed');
+            cardBody.show();
+            $('#toggle-{{ card_id }}').removeAttr("uk-icon");
+            $('#toggle-{{ card_id }}').attr("uk-icon", "icon: chevron-up; ratio: .85;");
+          } else {
+            $(cardBody).addClass('collapsed');
+            $(cardBody).hide();
+            $('#toggle-{{ card_id }}').removeAttr("uk-icon");
+            $('#toggle-{{ card_id }}').attr("uk-icon", "icon: chevron-down; ratio: .85;");
+          }
+
+          // Prevent refresh
+          e.preventDefault();
+        })
+      }
     });
   </script>
 {% endmacro %}
@@ -54,21 +75,27 @@
 
 {% macro render_item_buttons(update_url, duplicate_url, delete_url) %}
   <td>
-    <div class="item-buttons uk-flex-inline">
+    <div class="uk-flex-inline">
       {% if update_url %}
-        <a href="{{ update_url }}" title="Modifica" class="uk-icon-button uk-text-primary uk-background-default" uk-icon="icon: cog; ratio: .85;"></a>
+        <a href="{{ update_url }}" title="Modifica" class="uk-icon-button uk-text-primary uk-background-default small-icon-button"
+           uk-icon="icon: cog; ratio: .85;">
+        </a>
       {% endif %}
       {% if duplicate_url %}
-        <a href="{{ duplicate_url}}" title="Duplica" class="uk-icon-button uk-text-primary uk-background-default" uk-icon="icon: copy; ratio: .85;"></a>
+        <a href="{{ duplicate_url}}" title="Duplica" class="uk-icon-button uk-text-primary uk-background-default small-icon-button"
+           uk-icon="icon: copy; ratio: .85;">
+        </a>
       {% endif %}
       {% if delete_url %}
-        <a href="{{ delete_url }}" title="Elimina" class="uk-icon-button uk-text-primary uk-background-default" uk-icon="icon: trash; ratio: .85;"></a>
+        <a href="{{ delete_url }}" title="Elimina" class="uk-icon-button uk-text-primary uk-background-default small-icon-button"
+           uk-icon="icon: trash; ratio: .85;">
+        </a>
       {% endif %}
     </div>
   </td>
 
   <style>
-    .item-buttons a {
+    .small-icon-button {
       width: 28px;
       height: 28px;
       margin-left: 6px;
@@ -77,19 +104,25 @@
 {% endmacro %}
 
 {% macro render_users_table(title, users, all_flag) %}
-  <div class="uk-card uk-card-small uk-card-default">
-    <div class="uk-card-header uk-flex uk-flex-between uk-flex-middle">
+  {% set card_id = title.replace(" ", "-").lower() + "-card" %}
+  <div id="{{ card_id }}" class="uk-card uk-card-small uk-card-default" {{ 'style="cursor: pointer;"'|safe if not all_flag }}>
+    <div id="{{ card_id }}-header" class="uk-card-header uk-flex uk-flex-between uk-flex-middle">
       <h3 class="uk-card-title uk-margin-remove">{{ title }}</h3>
-      <span class="uk-label uk-background-muted uk-text-muted">{{ users|length }} volontari</span>
+      <div>
+        <span class="uk-label uk-background-muted uk-text-muted">{{ users|length }} <span class="uk-visible@s">volontari</span></span>
+        {% if not all_flag %}
+          <span id="toggle-{{ card_id }}" class="uk-icon-link small-icon-button" uk-icon="icon: chevron-down; ratio: .85;"></span>
+        {% endif %}
+      </div>
     </div>
-    <div class="uk-card-body">
+    <div class="uk-card-body collapsed" {{ 'style="display: none;"'|safe if not all_flag }}>
       {% if not all_flag %}
         {% set headers = ["Cognome", "Nome", "Genere", "Nato il", "Nato a", "CAP", "Città", "Indirizzo", "Email", "Tel", "Tipologia", "Note"] %}
       {% else %}
         {% set headers = ["Cognome", "Nome", "Genere", "Nato il", "Nato a", "CAP", "Città", "Indirizzo", "Email", "Tel", "Note"] %}
       {% endif %}
-      {% set table_id = title.replace(" ", "-").lower() + "-table" %}
       <div class="uk-overflow-auto">
+        {% set table_id = title.replace(" ", "-").lower() + "-table" %}
         <table id="{{ table_id }}" class="uk-table uk-table-small uk-table-striped uk-table-hover">
           <thead>
             <tr>
@@ -155,7 +188,7 @@
           </tfoot>
         </table>
       </div>
-      {{ table_scripts(table_id) }}
+      {{ table_scripts(card_id, table_id, not all_flag) }}
     </div>
   </div>
 {% endmacro %}
