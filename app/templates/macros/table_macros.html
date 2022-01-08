@@ -116,19 +116,13 @@
       </div>
     </div>
     <div class="uk-card-body collapsed" {{ 'style="display: none;"'|safe if not all_flag }}>
-      {% if not all_flag %}
-        {% set headers = ["Cognome", "Nome", "Genere", "Nato il", "Nato a", "CAP", "Città", "Indirizzo", "Email", "Tel", "Tipologia", "Note"] %}
-      {% else %}
-        {% set headers = ["Cognome", "Nome", "Genere", "Nato il", "Nato a", "CAP", "Città", "Indirizzo", "Email", "Tel", "Note"] %}
-      {% endif %}
+      {% set headers = ["Cognome", "Nome", "Genere", "Nato il", "Nato a", "CAP", "Città", "Indirizzo", "Email", "Tel", "Tipologia", "Note"] %}
       <div class="uk-overflow-auto">
         {% set table_id = title.replace(" ", "-").lower() + "-table" %}
         <table id="{{ table_id }}" class="uk-table uk-table-small uk-table-striped uk-table-hover">
           <thead>
             <tr>
-              {% if not all_flag %}
-                <th></th>
-              {% endif %}
+              <th></th>
               {% for header in headers%}
                 <th>{{ header }}</th>
               {% endfor %}
@@ -152,9 +146,7 @@
               {% set user_subtype_name = user.subtype_name or user[12] %}
               {% set user_subtype_id = user.subtype_id or user[13] %}
               <tr>
-                {% if not all_flag %}
-                  {{ render_item_buttons(url_for('users.update_user', user_id=user_id), url_for('users.duplicate_user', user_id=user_id, subtype_id=user_subtype_id), url_for('users.delete_user', user_id=user_id, subtype_id=user_subtype_id)) }}
-                {% endif %}
+                {{ render_item_buttons(url_for('users.update_user', user_id=user_id), url_for('users.duplicate_user', user_id=user_id, subtype_id=user_subtype_id), url_for('users.delete_user', user_id=user_id, subtype_id=user_subtype_id)) }}
                 <td>{{ replace_if_none(user_lastname) }}</td>
                 <td>{{ replace_if_none(user_firstname) }}</td>
                 <td>{{ replace_if_none(user_gender) }}</td>
@@ -172,9 +164,7 @@
                 <td>{{ replace_if_none(user_address) }}</td>
                 <td>{{ replace_if_none(user_email) }}</td>
                 <td>{{ replace_if_none(user_tel) }}</td>
-                {% if not all_flag %}
-                  <td>{{ user_subtype_name }}</td>
-                {% endif %}
+                <td>{{ user_subtype_name }}</td>
                 <td>{{ replace_if_none(user_notes) }}</td>
               </tr>
             {% endfor %}

@@ -13,6 +13,52 @@ from app.users.forms import NewUserForm, ConfirmUserDeletionForm, UpdateUserForm
 
 bp = Blueprint("users", __name__, url_prefix="/users")
 
+
+def merge_subtypes(users, subtypes_count):
+    """Merge subtype fields for same user belonging to multiple subcategories."""
+    users_length = len(users)
+    # Sort by id
+    users = sorted(users, key = lambda x: x[0])
+
+    to_delete = []
+    i = 0
+    while i <= users_length - 1:
+        # To prevent index out of range
+        if i + subtypes_count - 1 >= users_length - 1:
+            subtypes_count = (users_length - 1) - i
+
+        k = i + 1
+        deleted_count = 0
+        # Convert to list to make the record mutable
+        users[i] = list(users[i])
+        while k <= i + subtypes_count:
+            if users[k][0] == users[i][0]:
+                # Merge subtypes and sort them alphabetically
+                users[i][12] += ', ' + users[k][12]
+
+                deleted_count += 1
+                to_delete.insert(0, k)
+
+            k += 1
+
+        users[i][12] = ', '.join(map(str, sorted([subtype for subtype in users[i][12].split(', ')], key=str.lower)))
+        # Re-convert the record to tuple
+        users[i] = tuple(users[i])
+
+        if deleted_count > 0:
+            i += deleted_count + 1
+        else:
+            i += 1
+
+    # Remove duplicated user records
+    for n in to_delete:
+        del (users[n])
+
+    # Sort by lastname
+    users = sorted(users, key=lambda x: x[2])
+
+    return users
+
 @bp.route("/")
 @login_required
 @register_menu(bp, '.users', 'Volontari')
@@ -30,45 +76,7 @@ def index():
             .join(UserSubtype, UserSubtype.id == UserSubtypeAssociation.subtype_id)\
             .join(UserType, UserType.id == UserSubtype.type_id)\
             .filter(UserType.name == type_name)\
-            .order_by(User.lastname)\
             .all()
-
-        return users
-
-    def merge_subtypes(users, subtypes_count):
-        """Merge subtype fields for same user belonging to multiple subcategories."""
-        users_length = len(users)
-
-        to_delete = []
-        i = 0
-        while i <= users_length - 1:
-            # To prevent index out of range
-            if i + subtypes_count - 1 >= users_length - 1:
-                subtypes_count = (users_length - 1) - i
-
-            k = i + 1
-            deleted_count = 0
-            while k <= i + subtypes_count:
-                if users[k][0] == users[i][0]:
-                    # Merge subtypes and sort them alphabetically
-                    users[i] = list(users[i])
-                    users[i][12] += ', ' + users[k][12]
-                    users[i][12] = ', '.join(map(str, sorted([subtype for subtype in users[i][12].split(', ')], key=str.lower)))
-                    users[i] = tuple(users[i])
-
-                    deleted_count += 1
-                    to_delete.insert(0, k)
-
-                k += 1
-
-            if deleted_count > 0:
-                i += deleted_count + 1
-            else:
-                i += 1
-
-        # Remove duplicated user records
-        for n in to_delete:
-            del (users[n])
 
         return users
 
@@ -282,7 +290,23 @@ def update_user(user_id):
 @login_required
 def all_users():
     """Show all users."""
-    users = User.query.order_by(User.lastname).all()
+    users = User.query\
+            .with_entities(User.id, User.firstname, User.lastname, User.gender, User.born_on, User.born_in, User.zip,
+                           User.city, User.address, User.email, User.tel, User.notes,
+                           UserSubtype.name.label("subtype_name"), UserSubtype.id.label("subtype_id"))\
+            .join(UserSubtypeAssociation, UserSubtypeAssociation.user_id == User.id)\
+            .join(UserSubtype, UserSubtype.id == UserSubtypeAssociation.subtype_id)\
+            .join(UserType, UserType.id == UserSubtype.type_id)\
+            .all()
+
+    # Merge types to which the user belongs
+    types = UserType.query.all()
+    types_ids = [type.id for type in types]
+    all_subtypes_count = []
+    for type_id in types_ids:
+        all_subtypes_count.append(UserSubtype.query.filter_by(type_id=type_id).count())
+
+    users = merge_subtypes(users, sum(all_subtypes_count))
 
     return render_template("users/all_users.html", users=users)
 

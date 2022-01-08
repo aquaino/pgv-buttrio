@@ -22,7 +22,7 @@ def index():
     connection = engine.connect()
 
     # Number of users
-    users_count = User.query.count()
+    users_count = User.query.filter(User.email!='admin@admin.it').count()
 
     # Amount of hours in different activities
     ah_query = "SELECT end_time - start_time FROM activity_records"
