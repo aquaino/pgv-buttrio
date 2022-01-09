@@ -26,7 +26,7 @@
           <div class="uk-card-body">
             <ul class="uk-list uk-list-divider">
               {% for t in users_by_type %}
-                <li>{{ t[0] }}: <span class="uk-text-primary">{{ t[1]|string }}</span></li>
+                <li>{{ t[0] }} <span class="uk-text-primary uk-float-right">{{ t[1]|string }}</span></li>
               {% endfor %}
             </ul>
           </div>
@@ -75,6 +75,37 @@
         </div>
       </div>
 
-    </div>
+      <div>
+        <div class="uk-card uk-card-small uk-card-default">
+          <div class="uk-card-header">
+            <h3 class="uk-card-title uk-margin-remove">Volontari più attivi</h3>
+            <p class="uk-text-meta uk-margin-remove-top">Primi tre volontari per numero di attività svolte.</p>
+          </div>
+          <div class="uk-card-body">
+            <ul class="uk-list uk-list-decimal uk-list-divider">
+              {% for u in most_active_users %}
+                <li>{{ u.lastname }} {{ u.firstname }} <span class="uk-text-primary uk-float-right">{{ u[2] }}</span></li>
+              {% endfor %}
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <div class="uk-card uk-card-small uk-card-default">
+          <div class="uk-card-header">
+            <h3 class="uk-card-title uk-margin-remove">Gruppi più attivi</h3>
+            <p class="uk-text-meta uk-margin-remove-top">Primi tre gruppi per numero di attività svolte.</p>
+          </div>
+          <div class="uk-card-body">
+            <ul class="uk-list uk-list-decimal uk-list-divider">
+              {% for g in most_active_groups %}
+                <li>{{ g.name }} <span class="uk-text-primary uk-float-right">{{ g[1] }}</span></li>
+              {% endfor %}
+            </ul>
+          </div>
+        </div>
+      </div>
+
   </div>
 {% endblock %}

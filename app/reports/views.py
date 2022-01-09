@@ -48,11 +48,29 @@ def index():
     # Admins
     admins = User.query.filter(User.admin==True).order_by(User.lastname).all()
 
+    # Most active users
+    most_active_users = User.query\
+        .with_entities(User.firstname, User.lastname, func.count(User.id))\
+        .join(ActivityRecord, ActivityRecord.user_id == User.id)\
+        .group_by(User.firstname, User.lastname)\
+        .order_by(desc(func.count(User.id)))\
+        .limit(3).all()
+
+    # Most active groups
+    most_active_groups = UserSubtype.query\
+        .with_entities(UserSubtype.name, func.count(UserSubtype.id))\
+        .join(ActivityRecord, ActivityRecord.subtype_id == UserSubtype.id)\
+        .group_by(UserSubtype.name)\
+        .order_by(desc(func.count(UserSubtype.id)))\
+        .limit(3).all()
+
     return render_template("reports/index.html",
         users_count=users_count,
         activity_hours=activity_hours,
         users_by_type=users_by_type,
         events_count=events_count,
         days_count=days_count,
-        admins=admins
+        admins=admins,
+        most_active_users=most_active_users,
+        most_active_groups=most_active_groups
     )
