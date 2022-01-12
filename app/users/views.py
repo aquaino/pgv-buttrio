@@ -1,4 +1,5 @@
 import random
+import time
 
 from flask import Blueprint, flash, abort, redirect, url_for, render_template, request
 from flask_breadcrumbs import register_breadcrumb
@@ -75,7 +76,7 @@ def index():
             .join(UserSubtypeAssociation, UserSubtypeAssociation.user_id == User.id)\
             .join(UserSubtype, UserSubtype.id == UserSubtypeAssociation.subtype_id)\
             .join(UserType, UserType.id == UserSubtype.type_id)\
-            .filter(UserType.name == type_name)\
+            .filter(UserType.name == type_name, User.deleted == False)\
             .all()
 
         return users
@@ -160,26 +161,19 @@ def delete_user(user_id):
         for subtype_id in form.subtype.data:
             assoc = UserSubtypeAssociation.query.filter_by(user_id=user_id, subtype_id=subtype_id).first()
             db.session.delete(assoc)
+            db.session.commit()
 
         # If all the subtypes were selected also the user will be deleted
-        removed_from_all = False
-        if len(form.subtype.data) == len(form.subtype.choices):
-            removed_from_all = True
+        removed_from_all = (len(form.subtype.data) == len(form.subtype.choices))
 
         if removed_from_all:
-            # Check for any activities assigned to the user
-            has_activities = ActivityRecord.query.filter_by(user_id=user_id).first()
-
-            # If so, can't proceed
-            if has_activities:
-                flash("Il volontario \"{}\" non può essere rimosso dal sistema in quanto esistono delle attività a lui assegnate.".format(fullname), "error")
-            # Else delete the user
-            else:
-                db.session.delete(user)
-                db.session.commit()
-                flash("Volontario \"{}\" rimosso dal sistema.".format(fullname), "info")
+            # To avoid future email collisions with new users emails
+            user.email += '_deleted' + str(int(time.time()))
+            user.deleted = True
+            db.session.commit()
+            flash("Volontario \"{}\" rimosso dal sistema.".format(fullname), "info")
         else:
-            flash("Volontario \"{}\" eliminato dai gruppi selezionati.".format(fullname), "info")
+            flash("Volontario \"{}\" eliminato dal/i gruppo/i selezionato/i.".format(fullname), "info")
 
         return redirect(url_for("users.index"))
 
@@ -297,6 +291,7 @@ def all_users():
             .join(UserSubtypeAssociation, UserSubtypeAssociation.user_id == User.id)\
             .join(UserSubtype, UserSubtype.id == UserSubtypeAssociation.subtype_id)\
             .join(UserType, UserType.id == UserSubtype.type_id)\
+            .filter(User.deleted == False)\
             .all()
 
     # Merge types to which the user belongs

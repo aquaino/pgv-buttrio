@@ -17,6 +17,7 @@ class User(db.Model):
     notes = db.Column(db.Text())
     admin = db.Column(db.Boolean(), default=False)
     password = db.Column(db.String())
+    deleted = db.Column(db.Boolean(), nullable=False, default=False)
 
 class UserSubtype(db.Model):
     __tablename__ = "user_subtypes"
