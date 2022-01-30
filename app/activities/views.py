@@ -93,9 +93,9 @@ def duplicate_activity(activity_id):
 
     return render_template("confirm_duplication.html", form=form, page_title="Duplicazione attività", item_name=event.name)
 
-def _get_provinces(file):
+def _get_provinces():
     """Get provinces from JSON file."""
-    with open(file, "r") as towns_file:
+    with open("app/towns.json", "r") as towns_file:
         import json
         data = json.load(towns_file)
         return [(x["code"], x["name"]) for x in data["provinces"]]
@@ -112,7 +112,7 @@ def new_activity():
     form.user.choices = [(row.id, row.lastname + " " + row.firstname) for row in User.query.filter(User.email != "admin@admin.it").order_by(User.lastname)]
     form.event.choices = [(row.id, row.name) for row in Event.query.with_entities(Event.id, Event.name)]
     form.activity.choices = [(row.id, row.name) for row in Activity.query.with_entities(Activity.id, Activity.name)]
-    form.province.choices = _get_provinces("app/towns.json")
+    form.province.choices = _get_provinces()
 
     if form.validate_on_submit():
         # Create the record
@@ -169,7 +169,7 @@ def update_activity(activity_id):
     form.user.choices = [(row.id, row.lastname + " " + row.firstname) for row in User.query.filter(User.email != "admin@admin.it").order_by(User.lastname)]
     form.event.choices = [(row.id, row.name) for row in Event.query.with_entities(Event.id, Event.name)]
     form.activity.choices = [(row.id, row.name) for row in Activity.query.with_entities(Activity.id, Activity.name)]
-    form.province.choices = _get_provinces("app/towns.json")
+    form.province.choices = _get_provinces()
     form.town.choices = _get_towns_from_file(activity.province)
 
     if form.validate_on_submit():

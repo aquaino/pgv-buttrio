@@ -31,20 +31,17 @@
     <div class="uk-width-1-2@s">
       {{ form_macros.render_field(form.lastname, "simple") }}
     </div>
-    <div class="uk-width-1-3@s">
+    <div class="uk-width-1-2@s">
       {{ form_macros.render_field(form.gender, "select") }}
     </div>
-    <div class="uk-width-1-3@s">
+    <div class="uk-width-1-2@s">
       {{ form_macros.render_field(form.born_on, "simple") }}
     </div>
     <div class="uk-width-1-3@s">
-      {{ form_macros.render_field(form.born_in, "simple") }}
+      {{ form_macros.render_field(form.province, "select") }}
     </div>
     <div class="uk-width-1-3@s">
-      {{ form_macros.render_field(form.zip, "simple") }}
-    </div>
-    <div class="uk-width-1-3@s">
-      {{ form_macros.render_field(form.city, "simple") }}
+      {{ form_macros.render_field(form.town, "select") }}
     </div>
     <div class="uk-width-1-3@s">
       {{ form_macros.render_field(form.address, "simple") }}
@@ -75,13 +72,51 @@
 </div>
 
 <script>
-  /* Show/hide password input on admin checkbox changes */
-  $('#admin').change(function(){
-    if ($(this).prop('checked')) {
-      $('#password-container').toggleClass('uk-hidden@s');
-    } else {
-      $('#password-container').toggleClass('uk-hidden@s');
-    }
+  $(document).ready(function() {
+    /* Show/hide password input on admin checkbox changes */
+    $('#admin').change(function(){
+      if ($(this).prop('checked')) {
+        $('#password-container').toggleClass('uk-hidden@s');
+      } else {
+        $('#password-container').toggleClass('uk-hidden@s');
+      }
+    });
+
+    // Get town select fields
+    province_dropdown = $("#province");
+    town_dropdown = $("#town");
+
+    // Update users and towns on load only in new mode
+    {% if action == "new" %}
+      updateTowns();
+    {% endif %}
+
+    // Event listeners to check for subtype and province dropdowns changes
+    province_dropdown.change(function() {
+      updateTowns();
+    });
   });
+
+  // Function to call XHR and update towns dropdown
+  function updateTowns() {
+    var send = {
+      province: province_dropdown.val()
+    };
+    town_dropdown.attr("disabled", "disabled");
+    town_dropdown.empty();
+    $.getJSON("{{ url_for('activities._get_towns') }}", send, function(data) {
+      if (data.length) {
+        data.forEach(function(item) {
+          town_dropdown.append(
+            $("<option>", {
+              value: item,
+              text: item
+            })
+          );
+        });
+        town_dropdown.removeAttr("disabled");
+      }
+    });
+  }
 </script>
 {% endblock %}

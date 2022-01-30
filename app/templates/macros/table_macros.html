@@ -135,7 +135,7 @@
       </div>
     </div>
     <div class="uk-card-body collapsed" {{ 'style="display: none;"'|safe if not all_flag }}>
-      {% set headers = ["Cognome", "Nome", "Genere", "Nato il", "Nato a", "CAP", "Città", "Indirizzo", "Email", "Tel", "Tipologia", "Note"] %}
+      {% set headers = ["Cognome", "Nome", "Genere", "Nato il", "Comune", "Indirizzo", "Email", "Tel", "Tipologia", "Note"] %}
       <div class="uk-overflow-auto">
         {% set table_id = title.replace(" ", "-").lower() + "-table" %}
         <table id="{{ table_id }}" class="uk-table uk-table-small uk-table-striped">
@@ -155,15 +155,14 @@
               {% set user_lastname = user.lastname or user[2] %}
               {% set user_gender = user.gender or user[3] %}
               {% set user_born_on = user.born_on or user[4] or '-' %}
-              {% set user_born_in = user.born_in or user[5] %}
-              {% set user_zip = user.zip or user[6] %}
-              {% set user_city = user.city or user[7] %}
-              {% set user_address = user.address or user[8] %}
-              {% set user_email = user.email or user[9] %}
-              {% set user_tel = user.tel or user[10] %}
-              {% set user_notes = user.notes or user[11] %}
-              {% set user_subtype_name = user.subtype_name or user[12] %}
-              {% set user_subtype_id = user.subtype_id or user[13] %}
+              {% set user_province = user.province or user[5] %}
+              {% set user_town = user.town or user[6] %}
+              {% set user_address = user.address or user[7] %}
+              {% set user_email = user.email or user[8] %}
+              {% set user_tel = user.tel or user[9] %}
+              {% set user_notes = user.notes or user[10] %}
+              {% set user_subtype_name = user.subtype_name or user[11] %}
+              {% set user_subtype_id = user.subtype_id or user[12] %}
               <tr>
                 {{ render_item_buttons(url_for('users.update_user', user_id=user_id), url_for('users.duplicate_user', user_id=user_id, subtype_id=user_subtype_id), url_for('users.delete_user', user_id=user_id, subtype_id=user_subtype_id)) }}
                 <td>{{ replace_if_none(user_lastname) }}</td>
@@ -177,9 +176,7 @@
                 {% else %}
                   <td>{{ user_born_on.strftime('%d/%m/%Y') }}</td>
                 {% endif %}
-                <td>{{ replace_if_none(user_born_in) }}</td>
-                <td>{{ replace_if_none(user_zip) }}</td>
-                <td>{{ replace_if_none(user_city) }}</td>
+                <td>{{ user_town + " (" + user_province + ")" if user_town else "-" }}</td>
                 <td>{{ replace_if_none(user_address) }}</td>
                 <td>{{ replace_if_none(user_email) }}</td>
                 <td>{{ replace_if_none(user_tel) }}</td>

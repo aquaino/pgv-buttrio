@@ -18,9 +18,9 @@ class NewUserForm(FlaskForm):
     lastname = StringField("Cognome*", validators=[InputRequired()])
     gender = SelectField("Genere")
     born_on = DateField("Nato il", validators=[Optional()])
-    born_in = StringField("Nato a")
-    zip = StringField("CAP", validators=[Optional(), only_numbers])
-    city = StringField("Città")
+    province = SelectField("Provincia*")
+    # Avoid validation because towns are loaded dynamically from file
+    town = SelectField("Comune*", validate_choice=False)
     address = StringField("Indirizzo")
     email = EmailField("Indirizzo email*", validators=[InputRequired()])
     tel = TelField("Numero di telefono", validators=[Optional(), only_numbers])

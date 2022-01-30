@@ -71,9 +71,11 @@
     province_dropdown = $("#province");
     town_dropdown = $("#town");
 
-    // Update users and towns on load (e.g. after invalid input)
-    updateUsers();
-    updateTowns();
+    // Update users and towns on load only in new mode
+    {% if action == "new" %}
+      updateUsers();
+      updateTowns();
+    {% endif %}
 
     // Event listeners to check for subtype and province dropdowns changes
     subtype_dropdown.change(function() {
