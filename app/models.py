@@ -82,5 +82,7 @@ class ActivityRecord(db.Model):
     activity = db.relationship('Activity', backref=db.backref('activity_records', lazy=True))
     start_time = db.Column(db.Time(), nullable=False)
     end_time = db.Column(db.Time(), nullable=False)
-    location = db.Column(db.String(), nullable=False)
+    province = db.Column(db.String(), nullable=False)
+    town = db.Column(db.String(), nullable=False)
+    location = db.Column(db.String())
     notes = db.Column(db.Text())

@@ -254,7 +254,7 @@
       <span class="uk-label uk-background-muted uk-text-muted">{{ activities|length }} attività</span>
     </div>
     <div class="uk-card-body">
-      {% set headers = ["Data", "Volontario", "Tip. vol.", "Evento", "Attività", "Inizio", "Fine", "Luogo", "Note"] %}
+      {% set headers = ["Data", "Volontario", "Tip. vol.", "Evento", "Attività", "Inizio", "Fine", "Comune", "Luogo", "Note"] %}
       {% set table_id = title.replace(" ", "-").lower() + "-table" %}
       <div class="uk-overflow-auto">
         <table id="{{ table_id }}" class="uk-table uk-table-small uk-table-striped">
@@ -279,7 +279,8 @@
               <td>{{ activity.activity }}</td>
               <td>{{ activity.start_time }}</td>
               <td>{{ activity.end_time }}</td>
-              <td>{{ activity.location }}</td>
+              <td>{{ activity.town + ' (' + activity.province + ')' }}</td>
+              <td>{{ replace_if_none(activity.location) }}</td>
               <td>{{ replace_if_none(activity.notes) }}</td>
             </tr>
             {% endfor %}

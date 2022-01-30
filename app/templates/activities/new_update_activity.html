@@ -41,7 +41,13 @@
     <div class="uk-width-1-4@s">
       {{ form_macros.render_field(form.end_time, "simple") }}
     </div>
-    <div class="uk-width-1-1@s">
+    <div class="uk-width-1-3@s">
+      {{ form_macros.render_field(form.province, "select") }}
+    </div>
+    <div class="uk-width-1-3@s">
+      {{ form_macros.render_field(form.town, "select") }}
+    </div>
+    <div class="uk-width-1-3@s">
       {{ form_macros.render_field(form.location, "simple") }}
     </div>
     <div class="uk-width-1-1@s">
@@ -57,42 +63,69 @@
 
 <script>
   $(document).ready(function() {
-    // Get select fields
+    // Get user select fields
     subtype_dropdown = $("#subtype");
     user_dropdown = $("#user");
 
-    // Update users on load, based on the subtype field (except when updating)
-    {% if action == "new" %}
-      updateUsers();
-    {% endif %}
+    // Get town select fields
+    province_dropdown = $("#province");
+    town_dropdown = $("#town");
 
-    // Function to call XHR and update user dropdown
-    function updateUsers() {
-      var send = {
-        subtype: subtype_dropdown.val()
-      };
-      user_dropdown.attr("disabled", "disabled");
-      user_dropdown.empty();
-      $.getJSON("{{ url_for('activities._get_users') }}", send, function(data) {
-        if (data.length) {
-          data.forEach(function(item) {
-            user_dropdown.append(
-              $("<option>", {
-                value: item[0],
-                text: item[1]
-              })
-            );
-          });
-          user_dropdown.removeAttr("disabled");
-        }
-      });
-    }
+    // Update users and towns on load (e.g. after invalid input)
+    updateUsers();
+    updateTowns();
 
-    // Event listener to check for subtype dropdown changes
+    // Event listeners to check for subtype and province dropdowns changes
     subtype_dropdown.change(function() {
-      console.log("Change");
       updateUsers();
     });
+    province_dropdown.change(function() {
+      updateTowns();
+    });
   });
+
+  // Function to call XHR and update users dropdown
+  function updateUsers() {
+    var send = {
+      subtype: subtype_dropdown.val()
+    };
+    user_dropdown.attr("disabled", "disabled");
+    user_dropdown.empty();
+    $.getJSON("{{ url_for('activities._get_users') }}", send, function(data) {
+      if (data.length) {
+        data.forEach(function(item) {
+          user_dropdown.append(
+            $("<option>", {
+              value: item[0],
+              text: item[1]
+            })
+          );
+        });
+        user_dropdown.removeAttr("disabled");
+      }
+    });
+  }
+
+  // Function to call XHR and update towns dropdown
+  function updateTowns() {
+    var send = {
+      province: province_dropdown.val()
+    };
+    town_dropdown.attr("disabled", "disabled");
+    town_dropdown.empty();
+    $.getJSON("{{ url_for('activities._get_towns') }}", send, function(data) {
+      if (data.length) {
+        data.forEach(function(item) {
+          town_dropdown.append(
+            $("<option>", {
+              value: item,
+              text: item
+            })
+          );
+        });
+        town_dropdown.removeAttr("disabled");
+      }
+    });
+  }
 </script>
 {% endblock %}

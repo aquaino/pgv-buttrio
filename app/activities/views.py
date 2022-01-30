@@ -18,7 +18,10 @@ bp = Blueprint("activities", __name__, url_prefix="/activities")
 def index():
     """Show recent activities."""
     activities = ActivityRecord.query\
-        .with_entities(ActivityRecord.id, ActivityRecord.date, User.firstname, User.lastname, UserSubtype.name.label("subtype"), Event.name.label("event"), Activity.name.label("activity"), ActivityRecord.start_time, ActivityRecord.end_time, ActivityRecord.location, ActivityRecord.notes)\
+        .with_entities(
+            ActivityRecord.id, ActivityRecord.date, User.firstname, User.lastname, UserSubtype.name.label("subtype"),
+            Event.name.label("event"), Activity.name.label("activity"), ActivityRecord.start_time,
+            ActivityRecord.end_time, ActivityRecord.province, ActivityRecord.town, ActivityRecord.location, ActivityRecord.notes)\
         .join(User, User.id == ActivityRecord.user_id)\
         .join(UserSubtype, UserSubtype.id == ActivityRecord.subtype_id)\
         .join(Activity, Activity.id == ActivityRecord.activity_id)\
@@ -90,6 +93,13 @@ def duplicate_activity(activity_id):
 
     return render_template("confirm_duplication.html", form=form, page_title="Duplicazione attività", item_name=event.name)
 
+def _get_provinces(file):
+    """Get provinces from JSON file."""
+    with open(file, "r") as towns_file:
+        import json
+        data = json.load(towns_file)
+        return [(x["code"], x["name"]) for x in data["provinces"]]
+
 @bp.route("/new-activity", methods=("GET", "POST"))
 @register_breadcrumb(bp, '.new-activity', 'Nuova attività')
 @login_required
@@ -102,10 +112,16 @@ def new_activity():
     form.user.choices = [(row.id, row.lastname + " " + row.firstname) for row in User.query.filter(User.email != "admin@admin.it").order_by(User.lastname)]
     form.event.choices = [(row.id, row.name) for row in Event.query.with_entities(Event.id, Event.name)]
     form.activity.choices = [(row.id, row.name) for row in Activity.query.with_entities(Activity.id, Activity.name)]
+    form.province.choices = _get_provinces("app/towns.json")
 
     if form.validate_on_submit():
         # Create the record
-        record = ActivityRecord(date=form.date.data, subtype_id=form.subtype.data, user_id=form.user.data, event_id=form.event.data, activity_id=form.activity.data, start_time=form.start_time.data, end_time=form.end_time.data, location=form.location.data, notes=form.notes.data)
+        record = ActivityRecord(
+            date=form.date.data, subtype_id=form.subtype.data, user_id=form.user.data,
+            event_id=form.event.data, activity_id=form.activity.data, start_time=form.start_time.data,
+            end_time=form.end_time.data, province=form.province.data, town=form.town.data, location=form.location.data,
+            notes=form.notes.data
+        )
         db.session.add(record)
         db.session.commit()
 
@@ -120,6 +136,18 @@ def _get_users():
     users = [(row.id, row.lastname + " " + row.firstname) for row in User.query.join(UserSubtypeAssociation, UserSubtypeAssociation.user_id == User.id).filter(UserSubtypeAssociation.subtype_id == subtype).order_by(User.lastname)]
     return jsonify(users)
 
+@bp.route("/_get_towns/")
+def _get_towns():
+    province = request.args.get("province", "01", type=str)
+    return jsonify(_get_towns_from_file(province))
+
+def _get_towns_from_file(province):
+    with open("app/towns.json", "r") as towns_file:
+        import json
+        data = json.load(towns_file)
+        towns = next(x["towns"] for x in data["provinces"] if x["code"] == province)
+    return towns
+
 @bp.route("/<int:activity_id>/update", methods=("GET", "POST"))
 @register_breadcrumb(bp, '.update-activity', 'Modifica attività', endpoint_arguments_constructor=activity_eac)
 @login_required
@@ -131,12 +159,18 @@ def update_activity(activity_id):
         abort(404)
 
     # Populate fields with current record info
-    form = NewUpdateActivityRecordForm(subtype=activity.subtype_id, user=activity.user_id, date=activity.date, event=activity.event, activity=activity.activity_id, start_time=activity.start_time, end_time=activity.end_time, location=activity.location, notes=activity.notes)
+    form = NewUpdateActivityRecordForm(
+        subtype=activity.subtype_id, user=activity.user_id, date=activity.date, event=activity.event,
+        activity=activity.activity_id, start_time=activity.start_time, end_time=activity.end_time,
+        province=activity.province, town=activity.town, location=activity.location, notes=activity.notes
+    )
 
     form.subtype.choices = [(row.id, row.name) for row in UserSubtype.query.with_entities(UserSubtype.id, UserSubtype.name)]
     form.user.choices = [(row.id, row.lastname + " " + row.firstname) for row in User.query.filter(User.email != "admin@admin.it").order_by(User.lastname)]
     form.event.choices = [(row.id, row.name) for row in Event.query.with_entities(Event.id, Event.name)]
     form.activity.choices = [(row.id, row.name) for row in Activity.query.with_entities(Activity.id, Activity.name)]
+    form.province.choices = _get_provinces("app/towns.json")
+    form.town.choices = _get_towns_from_file(activity.province)
 
     if form.validate_on_submit():
         activity.subtype_id = form.subtype.data
@@ -146,6 +180,8 @@ def update_activity(activity_id):
         activity.activity_id = form.activity.data
         activity.start_time = form.start_time.data
         activity.end_time = form.end_time.data
+        activity.province = form.province.data
+        activity.town = form.town.data
         activity.location = form.location.data
         activity.notes = form.notes.data
 
