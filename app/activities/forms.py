@@ -21,4 +21,5 @@ class NewUpdateActivityRecordForm(FlaskForm):
     def validate_end_time(form, end_time):
         """Check if end time is greater than start time."""
         if form.end_time.data <= form.start_time.data:
-            raise ValidationError("L'orario di fine attività non può essere anteriore a quello d'inizio.")
+            raise ValidationError("L'orario di fine attività non può precedere quello d'inizio.\
+                                  Se l'attività è a cavallo tra due giorni è necessario suddividerla in due attività distinte.")
