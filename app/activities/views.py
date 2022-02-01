@@ -132,14 +132,21 @@ def new_activity():
 
 @bp.route("/_get_users/")
 def _get_users():
-    subtype = request.args.get("subtype", "01", type=int)
-    users = [(row.id, row.lastname + " " + row.firstname) for row in User.query.join(UserSubtypeAssociation, UserSubtypeAssociation.user_id == User.id).filter(UserSubtypeAssociation.subtype_id == subtype).order_by(User.lastname)]
-    return jsonify(users)
+    subtype = request.args.get("subtype", type=int)
+    if subtype:
+        users = [(row.id, row.lastname + " " + row.firstname) for row in User.query.join(UserSubtypeAssociation, UserSubtypeAssociation.user_id == User.id).filter(UserSubtypeAssociation.subtype_id == subtype).order_by(User.lastname)]
+        return jsonify(users)
+    else:
+        return ""
 
 @bp.route("/_get_towns/")
 def _get_towns():
-    province = request.args.get("province", "01", type=str)
-    return jsonify(_get_towns_from_file(province))
+    province = request.args.get("province", type=str)
+    if province:
+        towns = _get_towns_from_file(province)
+        return jsonify(towns)
+    else:
+        return ""
 
 def _get_towns_from_file(province):
     with open("app/towns.json", "r") as towns_file:

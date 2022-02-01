@@ -89,6 +89,8 @@
     // Update users and towns on load only in new mode
     {% if action == "new" %}
       updateTowns();
+    {% elif action == "update" and not form.province.data %}
+      town_dropdown.attr("disabled", "disabled");
     {% endif %}
 
     // Event listeners to check for subtype and province dropdowns changes

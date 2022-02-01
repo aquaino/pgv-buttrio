@@ -101,6 +101,8 @@ def index():
 
     return render_template("users/index.html", pc=pc, alpini=alpini, occasionali=occasionali, non_assicurati=non_assicurati)
 
+GENDER_CHOICES = [("", "-"), ("Non specificato", "Non specificato"), ("Uomo", "Uomo"), ("Donna", "Donna")]
+
 @bp.route("/new-user", methods=("GET", "POST"))
 @login_required
 @register_breadcrumb(bp, '.new-user', 'Nuovo volontario')
@@ -108,10 +110,11 @@ def new_user():
     """Create a new user."""
     subtype_choices = [(row.id, row.name) for row in UserSubtype.query.with_entities(UserSubtype.id, UserSubtype.name)]
     form = NewUserForm(subtype=[subtype_choices[0][0]])
-    form.gender.choices = ["Non specificato", "Uomo", "Donna"]
+    form.gender.choices = GENDER_CHOICES
     form.subtype.choices = subtype_choices
     form.subtype.default = [1]
     form.province.choices = _get_provinces()
+    form.province.choices.insert(0, ("", "-"))
 
     if form.validate_on_submit():
         # Create the user
@@ -241,10 +244,12 @@ def update_user(user_id):
         tel=user.tel, notes=user.notes, admin=user.admin
     )
 
-    form.gender.choices = ["Non specificato", "Uomo", "Donna"]
+    form.gender.choices = GENDER_CHOICES
     form.subtype.choices = subtype_choices
     form.province.choices = _get_provinces()
-    form.town.choices = _get_towns_from_file(user.province)
+    form.province.choices.insert(0, ("", "-"))
+    if user.province:
+        form.town.choices = _get_towns_from_file(user.province)
 
     if form.validate_on_submit():
         # Update the user
