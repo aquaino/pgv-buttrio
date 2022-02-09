@@ -3,6 +3,7 @@ from flask_breadcrumbs import register_breadcrumb
 from flask_menu import register_menu
 from sqlalchemy import desc
 from sqlalchemy.orm.session import make_transient
+import requests
 
 from app.activities.forms import NewUpdateActivityRecordForm
 from app.auth.views import login_required
@@ -21,7 +22,8 @@ def index():
         .with_entities(
             ActivityRecord.id, ActivityRecord.date, User.firstname, User.lastname, UserSubtype.name.label("subtype"),
             Event.name.label("event"), Activity.name.label("activity"), ActivityRecord.start_time,
-            ActivityRecord.end_time, ActivityRecord.province, ActivityRecord.town, ActivityRecord.location, ActivityRecord.notes)\
+            ActivityRecord.end_time, ActivityRecord.region, ActivityRecord.province, ActivityRecord.town,
+            ActivityRecord.location, ActivityRecord.notes)\
         .join(User, User.id == ActivityRecord.user_id)\
         .join(UserSubtype, UserSubtype.id == ActivityRecord.subtype_id)\
         .join(Activity, Activity.id == ActivityRecord.activity_id)\
@@ -93,13 +95,6 @@ def duplicate_activity(activity_id):
 
     return render_template("confirm_duplication.html", form=form, page_title="Duplicazione attività", item_name=event.name)
 
-def _get_provinces():
-    """Get provinces from JSON file."""
-    with open("app/towns.json", "r") as towns_file:
-        import json
-        data = json.load(towns_file)
-        return [(x["code"], x["name"]) for x in data["provinces"]]
-
 @bp.route("/new-activity", methods=("GET", "POST"))
 @register_breadcrumb(bp, '.new-activity', 'Nuova attività')
 @login_required
@@ -112,15 +107,17 @@ def new_activity():
     form.user.choices = [(row.id, row.lastname + " " + row.firstname) for row in User.query.filter(User.email != "admin@admin.it").order_by(User.lastname)]
     form.event.choices = [(row.id, row.name) for row in Event.query.with_entities(Event.id, Event.name)]
     form.activity.choices = [(row.id, row.name) for row in Activity.query.with_entities(Activity.id, Activity.name)]
-    form.province.choices = _get_provinces()
+    form.region.choices = _get_regions().json
+    form.province.choices = _get_provinces().json
+    form.town.choices = _get_towns().json
 
     if form.validate_on_submit():
         # Create the record
         record = ActivityRecord(
             date=form.date.data, subtype_id=form.subtype.data, user_id=form.user.data,
             event_id=form.event.data, activity_id=form.activity.data, start_time=form.start_time.data,
-            end_time=form.end_time.data, province=form.province.data, town=form.town.data, location=form.location.data,
-            notes=form.notes.data
+            end_time=form.end_time.data, region=form.region.data, province=form.province.data,
+            town=form.town.data, location=form.location.data, notes=form.notes.data
         )
         db.session.add(record)
         db.session.commit()
@@ -131,6 +128,7 @@ def new_activity():
     return render_template("activities/new_update_activity.html", form=form, action="new")
 
 @bp.route("/_get_users/")
+@login_required
 def _get_users():
     subtype = request.args.get("subtype", type=int)
     if subtype:
@@ -138,22 +136,6 @@ def _get_users():
         return jsonify(users)
     else:
         return ""
-
-@bp.route("/_get_towns/")
-def _get_towns():
-    province = request.args.get("province", type=str)
-    if province:
-        towns = _get_towns_from_file(province)
-        return jsonify(towns)
-    else:
-        return ""
-
-def _get_towns_from_file(province):
-    with open("app/towns.json", "r") as towns_file:
-        import json
-        data = json.load(towns_file)
-        towns = next(x["towns"] for x in data["provinces"] if x["code"] == province)
-    return towns
 
 @bp.route("/<int:activity_id>/update", methods=("GET", "POST"))
 @register_breadcrumb(bp, '.update-activity', 'Modifica attività', endpoint_arguments_constructor=activity_eac)
@@ -168,7 +150,7 @@ def update_activity(activity_id):
     # Populate fields with current record info
     form = NewUpdateActivityRecordForm(
         subtype=activity.subtype_id, user=activity.user_id, date=activity.date, event=activity.event,
-        activity=activity.activity_id, start_time=activity.start_time, end_time=activity.end_time,
+        activity=activity.activity_id, start_time=activity.start_time, end_time=activity.end_time, region=activity.region,
         province=activity.province, town=activity.town, location=activity.location, notes=activity.notes
     )
 
@@ -176,8 +158,9 @@ def update_activity(activity_id):
     form.user.choices = [(row.id, row.lastname + " " + row.firstname) for row in User.query.filter(User.email != "admin@admin.it").order_by(User.lastname)]
     form.event.choices = [(row.id, row.name) for row in Event.query.with_entities(Event.id, Event.name)]
     form.activity.choices = [(row.id, row.name) for row in Activity.query.with_entities(Activity.id, Activity.name)]
-    form.province.choices = _get_provinces()
-    form.town.choices = _get_towns_from_file(activity.province)
+    form.region.choices = _get_regions().json
+    form.province.choices = _get_provinces().json
+    form.town.choices = _get_towns().json
 
     if form.validate_on_submit():
         activity.subtype_id = form.subtype.data
@@ -187,6 +170,7 @@ def update_activity(activity_id):
         activity.activity_id = form.activity.data
         activity.start_time = form.start_time.data
         activity.end_time = form.end_time.data
+        activity.region = form.region.data
         activity.province = form.province.data
         activity.town = form.town.data
         activity.location = form.location.data
@@ -198,3 +182,49 @@ def update_activity(activity_id):
         return redirect(url_for("activities.index"))
 
     return render_template("activities/new_update_activity.html", form=form, action="update")
+
+COMUNI_ITA_API = "https://comuni-ita.herokuapp.com/api"
+
+@bp.route("/_get_regions/")
+@login_required
+def _get_regions():
+    """Get all regions."""
+    return jsonify([(my_capitalize(x), my_capitalize(x)) for x in requests.get(COMUNI_ITA_API + "/regioni").json()])
+
+@bp.route("/_get_provinces/")
+@login_required
+def _get_provinces():
+    """Get all provinces or provinces of the specified region."""
+    region = request.args.get("region")
+    if region:
+        provinces = [(my_capitalize(x), my_capitalize(x)) for x in requests.get(COMUNI_ITA_API + "/province/" + region + "?onlyname=true").json()]
+    else:
+        provinces = [(my_capitalize(x), my_capitalize(x)) for x in requests.get(COMUNI_ITA_API + "/province?onlyname=true").json()]
+    return jsonify(provinces)
+
+@bp.route("/_get_towns/")
+@login_required
+def _get_towns():
+    """Get all towns or towns of the specified province."""
+    province = request.args.get("province", type=str)
+    if province:
+        towns = [(x, x) for x in requests.get(COMUNI_ITA_API + "/comuni/provincia/" + province + "?onlyname=true").json()]
+    else:
+        towns = [(x, x) for x in requests.get(COMUNI_ITA_API + "/comuni?onlyname=true").json()]
+    return jsonify(towns)
+
+def my_capitalize(name):
+    """Function to correctly capitalize provinces and towns names."""
+    words = name.split()
+    res = []
+    for i, w in enumerate(words):
+        print(len(w))
+        if "'" not in w or i == 0 or len(w) > 1:
+            res.append(w.title())
+        else:
+            if "'" in w:
+                inner_words = w.split("'")
+                res.append(inner_words[0] + "'" + inner_words[1].title())
+            else:
+                res.append(w)
+    return " ".join(res)

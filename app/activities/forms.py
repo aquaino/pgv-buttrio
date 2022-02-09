@@ -11,9 +11,9 @@ class NewUpdateActivityRecordForm(FlaskForm):
     activity = SelectField("Tipo di attività*", validators=[InputRequired()])
     start_time = TimeField("Inizio*", validators=[InputRequired()])
     end_time = TimeField("Fine*", validators=[InputRequired()])
+    region = SelectField("Regione*", validators=[InputRequired()])
     province = SelectField("Provincia*", validators=[InputRequired()])
-    # Avoid validation because towns are loaded dynamically from file
-    town = SelectField("Comune*", validators=[InputRequired()], validate_choice=False)
+    town = SelectField("Comune*", validators=[InputRequired()])
     location = StringField("Luogo")
     notes = TextAreaField("Note", filters=[lambda x: x or None])
     submit = SubmitField("OK")

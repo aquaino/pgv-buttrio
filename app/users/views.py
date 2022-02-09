@@ -11,7 +11,7 @@ from app.auth.views import login_required
 from app.forms import ConfirmActionForm
 from app.models import db, User, UserSubtypeAssociation, UserSubtype, UserType, ActivityRecord
 from app.users.forms import NewUserForm, ConfirmUserDeletionForm, UpdateUserForm
-from app.activities.views import _get_provinces, _get_towns_from_file
+from app.activities.views import _get_regions, _get_provinces, _get_towns
 
 bp = Blueprint("users", __name__, url_prefix="/users")
 
@@ -20,7 +20,7 @@ def merge_subtypes(users, subtypes_count):
     """Merge subtype fields for same user belonging to multiple subcategories."""
     users_length = len(users)
     # Sort by id
-    users = sorted(users, key = lambda x: x[0])
+    users = sorted(users, key=lambda x: x[0])
 
     to_delete = []
     i = 0
@@ -36,14 +36,14 @@ def merge_subtypes(users, subtypes_count):
         while k <= i + subtypes_count:
             if users[k][0] == users[i][0]:
                 # Merge subtypes and sort them alphabetically
-                users[i][11] += ', ' + users[k][11]
+                users[i][12] += ', ' + users[k][12]
 
                 deleted_count += 1
                 to_delete.insert(0, k)
 
             k += 1
 
-        users[i][11] = ', '.join(map(str, sorted([subtype for subtype in users[i][11].split(', ')], key=str.lower)))
+        users[i][12] = ', '.join(map(str, sorted([subtype for subtype in users[i][12].split(', ')], key=str.lower)))
         # Re-convert the record to TUPLE
         users[i] = tuple(users[i])
 
@@ -71,7 +71,7 @@ def index():
     def users_by_type(type_name):
         """General query structure for different type of users."""
         users = User.query\
-            .with_entities(User.id, User.firstname, User.lastname, User.gender, User.born_on,
+            .with_entities(User.id, User.firstname, User.lastname, User.gender, User.born_on, User.region,
                            User.province, User.town, User.address, User.email, User.tel, User.notes,
                            UserSubtype.name.label("subtype_name"), UserSubtype.id.label("subtype_id"))\
             .join(UserSubtypeAssociation, UserSubtypeAssociation.user_id == User.id)\
@@ -101,7 +101,7 @@ def index():
 
     return render_template("users/index.html", pc=pc, alpini=alpini, occasionali=occasionali, non_assicurati=non_assicurati)
 
-GENDER_CHOICES = [("", "-"), ("Non specificato", "Non specificato"), ("Uomo", "Uomo"), ("Donna", "Donna")]
+GENDER_CHOICES = [("Non specificato", "Non specificato"), ("Uomo", "Uomo"), ("Donna", "Donna")]
 
 @bp.route("/new-user", methods=("GET", "POST"))
 @login_required
@@ -112,15 +112,15 @@ def new_user():
     form = NewUserForm(subtype=[subtype_choices[0][0]])
     form.gender.choices = GENDER_CHOICES
     form.subtype.choices = subtype_choices
-    form.subtype.default = [1]
-    form.province.choices = _get_provinces()
-    form.province.choices.insert(0, ("", "-"))
+    form.region.choices = _get_regions().json
+    form.province.choices = _get_provinces().json
+    form.town.choices = _get_towns().json
 
     if form.validate_on_submit():
         # Create the user
         user = User(
             firstname=form.firstname.data, lastname=form.lastname.data, gender=form.gender.data,
-            born_on=form.born_on.data, province=form.province.data, town=form.town.data,
+            born_on=form.born_on.data, region=form.region.data, province=form.province.data, town=form.town.data,
             address=form.address.data, email=form.email.data, tel=form.tel.data, notes=form.notes.data, admin=form.admin.data
         )
         db.session.add(user)
@@ -240,16 +240,15 @@ def update_user(user_id):
 
     form = UpdateUserForm(
         id=user_id , subtype=subtype_defaults, firstname=user.firstname, lastname=user.lastname, gender=user.gender,
-        born_on=user.born_on, province=user.province, town=user.town, address=user.address, email=user.email,
+        born_on=user.born_on, region=user.region, province=user.province, town=user.town, address=user.address, email=user.email,
         tel=user.tel, notes=user.notes, admin=user.admin
     )
 
     form.gender.choices = GENDER_CHOICES
     form.subtype.choices = subtype_choices
-    form.province.choices = _get_provinces()
-    form.province.choices.insert(0, ("", "-"))
-    if user.province:
-        form.town.choices = _get_towns_from_file(user.province)
+    form.region.choices = _get_regions().json
+    form.province.choices = _get_provinces().json
+    form.town.choices = _get_towns().json
 
     if form.validate_on_submit():
         # Update the user
@@ -257,6 +256,7 @@ def update_user(user_id):
         user.lastname = form.lastname.data
         user.gender = form.gender.data
         user.born_on = form.born_on.data
+        user.region = form.region.data
         user.province = form.province.data
         user.town = form.town.data
         user.address = form.address.data
@@ -292,7 +292,7 @@ def update_user(user_id):
 def all_users():
     """Show all users."""
     users = User.query\
-            .with_entities(User.id, User.firstname, User.lastname, User.gender, User.born_on,
+            .with_entities(User.id, User.firstname, User.lastname, User.gender, User.born_on, User.region,
                            User.province, User.town, User.address, User.email, User.tel, User.notes,
                            UserSubtype.name.label("subtype_name"), UserSubtype.id.label("subtype_id"))\
             .join(UserSubtypeAssociation, UserSubtypeAssociation.user_id == User.id)\

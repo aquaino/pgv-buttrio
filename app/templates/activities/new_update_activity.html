@@ -16,10 +16,9 @@
 <div class="uk-container-small uk-margin-top">
   <form method="POST" class="uk-form-stacked uk-grid-small" uk-grid>
     {% if action == "update" %}
-    <input type="hidden" name="_method" value="{{ hidden_method }}">
+      <input type="hidden" name="_method" value="{{ hidden_method }}">
     {% endif %}
     {{ form.csrf_token }}
-
     <div class="uk-width-1-2@s">
       {{ form_macros.render_field(form.subtype, "select") }}
     </div>
@@ -41,13 +40,16 @@
     <div class="uk-width-1-4@s">
       {{ form_macros.render_field(form.end_time, "simple") }}
     </div>
-    <div class="uk-width-1-3@s">
+    <div class="uk-width-1-4@s">
+      {{ form_macros.render_field(form.region, "select") }}
+    </div>
+    <div class="uk-width-1-4@s">
       {{ form_macros.render_field(form.province, "select") }}
     </div>
-    <div class="uk-width-1-3@s">
+    <div class="uk-width-1-4@s">
       {{ form_macros.render_field(form.town, "select") }}
     </div>
-    <div class="uk-width-1-3@s">
+    <div class="uk-width-1-4@s">
       {{ form_macros.render_field(form.location, "simple") }}
     </div>
     <div class="uk-width-1-1@s">
@@ -63,71 +65,116 @@
 
 <script>
   $(document).ready(function() {
-    // Get user select fields
-    subtype_dropdown = $("#subtype");
-    user_dropdown = $("#user");
 
-    // Get town select fields
-    province_dropdown = $("#province");
-    town_dropdown = $("#town");
+    // Location infos selection
 
-    // Update users and towns on load only in new mode
-    {% if action == "new" %}
-      updateUsers();
-      updateTowns();
-    {% endif %}
+    // Function to call XHR and update provinces dropdown
+    async function updateProvinces(region) {
+      var send = {
+        region: region ? region : dropdowns.region.val()
+      };
+      dropdowns.province.empty();
+      dropdowns.province.attr("disabled", "disabled");
+      await $.getJSON("{{ url_for('activities._get_provinces') }}", send, function(data) {
+        if (data.length) {
+          data.forEach(function(item) {
+            dropdowns.province.append(
+              $("<option>", {
+                  value: item[0],
+                  text: item[1]
+              })
+            );
+          });
+          dropdowns.province.removeAttr("disabled");
+        }
+      });
+    }
 
-    // Event listeners to check for subtype and province dropdowns changes
-    subtype_dropdown.change(function() {
-      updateUsers();
+    // Function to call XHR and update towns dropdown
+    async function updateTowns(province) {
+      var send = {
+        province: province ? province : dropdowns.province.val()
+      };
+      dropdowns.town.empty();
+      dropdowns.town.attr("disabled", "disabled");
+      await $.getJSON("{{ url_for('activities._get_towns') }}", send, function(data) {
+        if (data.length) {
+          data.forEach(function(item) {
+            dropdowns.town.append(
+              $("<option>", {
+                  value: item[0],
+                  text: item[1]
+              })
+            );
+          });
+          dropdowns.town.removeAttr("disabled");
+        }
+      });
+    }
+
+    // Function to call XHR and update users dropdown
+    async function updateUsers() {
+      var send = {
+        subtype: dropdowns.subtype.val()
+      };
+      dropdowns.user.empty();
+      dropdowns.user.attr("disabled", "disabled");
+      await $.getJSON("{{ url_for('activities._get_users') }}", send, function(data) {
+        if (data.length) {
+          data.forEach(function(item) {
+            dropdowns.user.append(
+              $("<option>", {
+                  value: item[0],
+                  text: item[1]
+              })
+            );
+          });
+          dropdowns.user.removeAttr("disabled");
+        }
+      });
+    }
+
+    // Get selects
+    var dropdowns = {
+      region: $("#region"),
+      province: $("#province"),
+      town: $("#town"),
+      subtype: $("#subtype"),
+      user: $("#user")
+    };
+
+    // Update infos and set defaults on load
+    async function setDefaults() {
+      {% if action == "new" %}
+        await updateProvinces("Friuli Venezia Giulia");
+        await updateTowns("Udine");
+        dropdowns.region.val("Friuli Venezia Giulia");
+        dropdowns.province.val("Udine");
+        dropdowns.town.val("Buttrio");
+      {% else %}
+        await updateProvinces("{{ form.data.region }}");
+        await updateTowns("{{ form.data.province }}");
+        dropdowns.region.val("{{ form.data.region }}");
+        dropdowns.province.val("{{ form.data.province }}");
+        dropdowns.town.val("{{ form.data.town }}");
+      {% endif %}
+    }
+    setDefaults();
+
+    // Event listeners to check for dropdowns changes
+    dropdowns.region.on("change", function() {
+      async function updateLocations() {
+        await updateProvinces();
+        await updateTowns();
+      }
+      updateLocations();
     });
-    province_dropdown.change(function() {
+    dropdowns.province.on("change", function() {
       updateTowns();
+    });
+    dropdowns.subtype.on("change", function() {
+      updateUsers();
     });
   });
-
-  // Function to call XHR and update users dropdown
-  function updateUsers() {
-    var send = {
-      subtype: subtype_dropdown.val()
-    };
-    user_dropdown.attr("disabled", "disabled");
-    user_dropdown.empty();
-    $.getJSON("{{ url_for('activities._get_users') }}", send, function(data) {
-      if (data.length) {
-        data.forEach(function(item) {
-          user_dropdown.append(
-            $("<option>", {
-              value: item[0],
-              text: item[1]
-            })
-          );
-        });
-        user_dropdown.removeAttr("disabled");
-      }
-    });
-  }
-
-  // Function to call XHR and update towns dropdown
-  function updateTowns() {
-    var send = {
-      province: province_dropdown.val()
-    };
-    town_dropdown.attr("disabled", "disabled");
-    town_dropdown.empty();
-    $.getJSON("{{ url_for('activities._get_towns') }}", send, function(data) {
-      if (data.length) {
-        data.forEach(function(item) {
-          town_dropdown.append(
-            $("<option>", {
-              value: item,
-              text: item
-            })
-          );
-        });
-        town_dropdown.removeAttr("disabled");
-      }
-    });
-  }
 </script>
 {% endblock %}
