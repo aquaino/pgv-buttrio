@@ -28,14 +28,12 @@ def setup_db_command():
     db.session.add(admin_user)
 
     fake_users = [
-        ("Alan", "Quaino", "Uomo", datetime.strptime("14/03/1996", "%d/%m/%Y"), "33042", "Buttrio", "Via Lungoroggia 77/5", "alanquaino@gmail.com", "3462709363"),
-        ("Renato", "Francovigh", "Uomo", None, "UD", "Buttrio", "Villaggio Testudo", "renatofrancovigh@gmail.com", "1234567890"),
-        ("Michele", "De Luca", "Uomo", None, "UD", "Buttrio", "Via Che Non So", "micheledeluca@gmail.com", "1234567890"),
+        ("Alan", "Quaino", "Uomo", datetime.strptime("14/03/1996", "%d/%m/%Y"), "Friuli Venezia Giulia", "Udine", "Buttrio", "alanquaino@gmail.com"),
+        ("Utente", "Test", "Non specificato", None, "Friuli Venezia Giulia", "Udine", "Buttrio", "utente@test.com"),
     ]
     for fake_user in fake_users:
         user = User(firstname=fake_user[0], lastname=fake_user[1], gender=fake_user[2], born_on=fake_user[3],
-            province=fake_user[4], town=fake_user[5], address=fake_user[6], email=fake_user[7],
-            tel=fake_user[8])
+            region=fake_user[4], province=fake_user[5], town=fake_user[6], email=fake_user[7])
         db.session.add(user)
 
     print("Admin and fake users created.")

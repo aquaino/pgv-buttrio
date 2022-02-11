@@ -189,7 +189,7 @@ COMUNI_ITA_API = "https://comuni-ita.herokuapp.com/api"
 @login_required
 def _get_regions():
     """Get all regions."""
-    return jsonify([(my_capitalize(x), my_capitalize(x)) for x in requests.get(COMUNI_ITA_API + "/regioni").json()])
+    return jsonify([(x, x) for x in requests.get(COMUNI_ITA_API + "/regioni").json()])
 
 @bp.route("/_get_provinces/")
 @login_required
@@ -197,9 +197,9 @@ def _get_provinces():
     """Get all provinces or provinces of the specified region."""
     region = request.args.get("region")
     if region:
-        provinces = [(my_capitalize(x), my_capitalize(x)) for x in requests.get(COMUNI_ITA_API + "/province/" + region + "?onlyname=true").json()]
+        provinces = [(x, x) for x in requests.get(COMUNI_ITA_API + "/province/" + region + "?onlyname=true").json()]
     else:
-        provinces = [(my_capitalize(x), my_capitalize(x)) for x in requests.get(COMUNI_ITA_API + "/province?onlyname=true").json()]
+        provinces = [(x, x) for x in requests.get(COMUNI_ITA_API + "/province?onlyname=true").json()]
     return jsonify(provinces)
 
 @bp.route("/_get_towns/")
@@ -212,19 +212,3 @@ def _get_towns():
     else:
         towns = [(x, x) for x in requests.get(COMUNI_ITA_API + "/comuni?onlyname=true").json()]
     return jsonify(towns)
-
-def my_capitalize(name):
-    """Function to correctly capitalize provinces and towns names."""
-    words = name.split()
-    res = []
-    for i, w in enumerate(words):
-        print(len(w))
-        if "'" not in w or i == 0 or len(w) > 1:
-            res.append(w.title())
-        else:
-            if "'" in w:
-                inner_words = w.split("'")
-                res.append(inner_words[0] + "'" + inner_words[1].title())
-            else:
-                res.append(w)
-    return " ".join(res)
